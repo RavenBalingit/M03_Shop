@@ -1,22 +1,20 @@
 package model;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import model.Client;
+import java.util.ArrayList;
 
 public class Sale {
-	private Client client;
-	ArrayList<Product> products;
+	Client client;
+	private  ArrayList<Product> products;
 	Amount amount;
-	LocalDateTime date;
+	LocalDateTime time;
 
-	public Sale(Client client, ArrayList<Product> products, Amount amount, LocalDateTime date) {
+	public Sale(Client client, ArrayList<Product> products , Amount amount, LocalDateTime time) {
 		super();
 		this.client = client;
 		this.products = products;
 		this.amount = amount;
-		this.date = LocalDateTime.now();
+		this.time = time;
 	}
 
 	public Client getClient() {
@@ -43,19 +41,11 @@ public class Sale {
 		this.amount = amount;
 	}
 
-	
-	public LocalDateTime getDate() {
-		return date;
-	}
-
-	public void setDate(LocalDateTime date) {
-		this.date = date;
-	}
-
 	@Override
 	public String toString() {
 		String productNames ="";
-		String client = "\nClient:" +  this.getClient() + "\n" ;
+	    DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+		String client = "\nClient:" +  this.client.getName().toUpperCase() + "\n" ;
 		for (Product product : this.products) {
 			if (product != null) {
 				if (product.getName() != null) {
@@ -64,12 +54,16 @@ public class Sale {
 				}
 			}
 		}
-		DateTimeFormatter format = DateTimeFormatter.ofPattern("dd-MM-yyyy:HH:mm:ss");
-		
-		String salesDate=date.format(format);
-		
-		return client + "products:\n" + productNames + "amount=[" + amount + "] + Fecha y hora de venta" + salesDate +"\n";
+		return client + "products:\n" + productNames + "amount=[" + amount + "]\n" + "time=[" + time.format(myFormatObj) + "]";
 
+	}
+
+	public LocalDateTime getTime() {
+		return time;
+	}
+
+	public void setTime(LocalDateTime time) {
+		this.time = time;
 	}
 
 }

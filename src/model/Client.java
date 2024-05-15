@@ -3,49 +3,39 @@ package model;
 import main.Payable;
 
 public class Client extends Person implements Payable {
-    private int memberId;
-    private Amount balance;
-    private static final int MEMBER_ID = 456;
-    private static final double INITIAL_BALANCE = 50.00;
+	
+	final int MEMBER_ID = 456;
+	final double BALANCE = 50;
+	private int member_id = MEMBER_ID;
+	private Amount balance = new Amount (BALANCE);
+	
 
-    public Client() {
-        this.memberId = MEMBER_ID; 
-        this.balance = new Amount(INITIAL_BALANCE); 
-    }
+	
+	public Client(String name) {
+		super(name);
+	}
 
-    @Override
-    public boolean pay(Amount amount) {
-        double newBalance = this.balance.getValue() - amount.getValue();
-        if (newBalance >= 0) {
-            this.balance.setValue(newBalance);
-            return true;
-        }
-        return false; 
-    }
+	public boolean pay(Amount amount) {
+	this.balance.setValue(this.balance.getValue() - amount.getValue());
+	if(this.balance.getValue() < 0) {
+		return false;
+	}
+	return true;
+	}
 
-    // Getters y Setters
-    public int getMemberId() {
-        return this.memberId;
-    }
+	public int getMember_id() {
+		return member_id;
+	}
 
-    public void setMemberId(int memberId) {
-        this.memberId = memberId;
-    }
+	public void setMember_id(int member_id) {
+		this.member_id = member_id;
+	}
 
-    public Amount getBalance() {
-        return this.balance;
-    }
+	public Amount getBalance() {
+		return balance;
+	}
 
-    public void setBalance(Amount balance) {
-        this.balance = balance;
-    }
-
-    @Override
-    public String getName() {
-        return this.name; // Asumiendo que Person tiene un atributo 'name' protegido
-    }
-
-    public void setName(String name) {
-        this.name = name; // Asumiendo que Person tiene un atributo 'name' protegido
-    }
+	public void setBalance(Amount balance) {
+		this.balance = balance;
+	}
 }
