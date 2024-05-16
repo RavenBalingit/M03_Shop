@@ -36,8 +36,6 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 	JButton btnAadirStock;
 	JButton btnEliminarProducto;
 	Shop shop = new Shop();
-	CashView cashView = new CashView(shop);
-	ProductView productView = new ProductView(shop);
 
 	/**
 	 * Launch the application.
@@ -101,7 +99,7 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 
 		addKeyListener(this);
 		setFocusable(true);
-		setFocusTraversalKeysEnabled(false); // Ensure key events are captured
+		setFocusTraversalKeysEnabled(false); 
 	}
 
 	
@@ -121,20 +119,24 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 	
 	
 	public void openCashView() {
+		CashView cashView = new CashView(shop);
 		cashView.setVisible(true);
 	}
 
 	public void addProduct() {
+		ProductView productView = new ProductView(shop);
 		productView.addProduct();
 		productView.setVisible(true);
 	}
 
 	public void addStock() {
+		ProductView productView = new ProductView(shop);
 		productView.addStock();
 		productView.setVisible(true);
 	}
 
 	public void deleteProduct() {
+		ProductView productView = new ProductView(shop);
 		productView.deleteProduct();
 		productView.setVisible(true);
 	}
