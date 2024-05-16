@@ -1,17 +1,20 @@
 package views;
 
 import java.awt.EventQueue;
-import javax.swing.JFrame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import model.*;
-import exception.*;
+
+import model.Employee;
+import exception.LimitLoginException;
 
 public class LoginView extends JFrame implements ActionListener {
 
@@ -76,6 +79,18 @@ public class LoginView extends JFrame implements ActionListener {
         btnNewButton.setBounds(314, 235, 94, 29);
         btnNewButton.addActionListener(this);
         getContentPane().add(btnNewButton);
+
+        // Add KeyListener to both text fields to trigger the login action on Enter key
+        KeyAdapter enterKeyListener = new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    btnNewButton.doClick();
+                }
+            }
+        };
+        
+        textField.addKeyListener(enterKeyListener);
+        textField_1.addKeyListener(enterKeyListener);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -96,6 +111,8 @@ public class LoginView extends JFrame implements ActionListener {
                         JOptionPane.showMessageDialog(insertWindow,
                                 "ERROR: HA INTRODUCIDO MAL LOS DATOS DE LA PERSONA, POR FAVOR VUELVA A INTRODUCIRLOS",
                                 "Error de Inserción", JOptionPane.ERROR_MESSAGE);
+                        textField.setText("");
+                        textField_1.setText(""); 
                     }
                 }
             } catch (LimitLoginException ex) {

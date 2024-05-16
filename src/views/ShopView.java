@@ -36,6 +36,8 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 	JButton btnAadirStock;
 	JButton btnEliminarProducto;
 	Shop shop = new Shop();
+	CashView cashView = new CashView(shop);
+	ProductView productView = new ProductView(shop);
 
 	/**
 	 * Launch the application.
@@ -71,86 +73,96 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 
 		btnContarCaja = new JButton("1. Contar Caja");
 		btnContarCaja.setBounds(6, 52, 190, 29);
-		contentPane.add(btnContarCaja);
 		btnContarCaja.addActionListener(this);
+		btnContarCaja.addKeyListener(this);
+		btnContarCaja.setFocusable(false); 
+		contentPane.add(btnContarCaja);
 
 		btnAadirProducto = new JButton("2. Añadir Producto");
 		btnAadirProducto.setBounds(6, 93, 190, 29);
-		contentPane.add(btnAadirProducto);
 		btnAadirProducto.addActionListener(this);
+		btnAadirProducto.addKeyListener(this);
+		btnAadirProducto.setFocusable(false); 
+		contentPane.add(btnAadirProducto);
 
 		btnAadirStock = new JButton("3. Añadir Stock");
 		btnAadirStock.setBounds(6, 134, 190, 29);
-		contentPane.add(btnAadirStock);
 		btnAadirStock.addActionListener(this);
+		btnAadirStock.addKeyListener(this); 
+		btnAadirStock.setFocusable(false);
+		contentPane.add(btnAadirStock);
 
 		btnEliminarProducto = new JButton("9. Eliminar producto");
 		btnEliminarProducto.setBounds(6, 175, 190, 29);
-		contentPane.add(btnEliminarProducto);
 		btnEliminarProducto.addActionListener(this);
+		btnEliminarProducto.addKeyListener(this); 
+		btnEliminarProducto.setFocusable(false); 
+		contentPane.add(btnEliminarProducto);
 
 		addKeyListener(this);
 		setFocusable(true);
+		setFocusTraversalKeysEnabled(false); // Ensure key events are captured
 	}
+
 	
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == btnContarCaja) {  
-			System.out.println("wan");
+		if(e.getSource() == btnContarCaja) {
 			openCashView();
-			
-
-		}
-		else if (e.getSource() == btnAadirProducto) {
-			System.out.println("tu");
-			ProductView productView = new ProductView(shop); 
-			productView.addProduct();
-			productView.setVisible(true);
-
-
-
-		}
-		else if (e.getSource() == btnAadirStock) {
-			System.out.println("tri");
-			ProductView productView = new ProductView(shop); 
-			productView.addStock();
-			productView.setVisible(true);
-
-
-		}
-		else if (e.getSource() == btnEliminarProducto) {
-			System.out.println("four");
-			ProductView productView = new ProductView(shop); 
-			productView.deleteProduct();
-			productView.setVisible(true);
-
-
+		} else if (e.getSource() == btnAadirProducto) {
+			addProduct();
+		} else if (e.getSource() == btnAadirStock) {
+			addStock();
+		} else if (e.getSource() == btnEliminarProducto) {
+			deleteProduct();
 		}
 	}
+	
+	
+	
 	
 	public void openCashView() {
-		CashView cashView = new CashView(shop);
 		cashView.setVisible(true);
-
 	}
-	
 
+	public void addProduct() {
+		productView.addProduct();
+		productView.setVisible(true);
+	}
+
+	public void addStock() {
+		productView.addStock();
+		productView.setVisible(true);
+	}
+
+	public void deleteProduct() {
+		productView.deleteProduct();
+		productView.setVisible(true);
+	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
+		int key = e.getKeyCode();
+		switch (key) {
+			case KeyEvent.VK_1:
+				openCashView();
+				break;
+			case KeyEvent.VK_2:
+				addProduct();
+				break;
+			case KeyEvent.VK_3:
+				addStock();
+				break;
+			case KeyEvent.VK_9:
+				deleteProduct();
+				break;
+		}
 	}
+
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
+
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
-	
-
-	
 }
