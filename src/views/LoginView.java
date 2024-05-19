@@ -3,14 +3,13 @@ package views;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import model.Employee;
@@ -23,7 +22,7 @@ public class LoginView extends JFrame implements ActionListener {
 
     private JButton btnNewButton;
     private JTextField textField;
-    private JTextField textField_1;
+    private JPasswordField passwordField;
     private JFrame frame;
     JLabel lblNewLabel_1;
 
@@ -70,43 +69,45 @@ public class LoginView extends JFrame implements ActionListener {
         lblNewLabel_1.setBounds(6, 119, 59, 16);
         getContentPane().add(lblNewLabel_1);
 
-        textField_1 = new JTextField();
-        textField_1.setBounds(188, 114, 132, 26);
-        textField_1.setColumns(10);
-        getContentPane().add(textField_1);
+        passwordField = new JPasswordField();
+        passwordField.setBounds(188, 114, 132, 26);
+        getContentPane().add(passwordField);
 
         btnNewButton = new JButton("Acceder");
         btnNewButton.setBounds(314, 235, 94, 29);
         btnNewButton.addActionListener(this);
         getContentPane().add(btnNewButton);
-        
     }
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnNewButton) {
             Employee employee = new Employee(null);
             try {
-                if (employee.login(Integer.valueOf(textField.getText()), textField_1.getText())) {
+                int employeeNumber = Integer.parseInt(textField.getText());
+                String password = new String(passwordField.getPassword());
+                
+                if (employee.login(employeeNumber, password)) {
                     System.out.println("funciona");
                     this.setVisible(false);
                     ShopView miTienda = new ShopView();
                     miTienda.setVisible(true);
                 } else {
-                    loginAttempts++;
-                    if (loginAttempts >= MAX_LOGIN_ATTEMPTS) {
-                        throw new LimitLoginException("Se han excedido los intentos de inicio de sesión.");
-                    } else {
-                        System.out.println("no funciona");
-                        JOptionPane.showMessageDialog(insertWindow,
-                                "ERROR: HA INTRODUCIDO MAL LOS DATOS DE LA PERSONA, POR FAVOR VUELVA A INTRODUCIRLOS",
-                                "Error de Inserción", JOptionPane.ERROR_MESSAGE);
-                    }
+                    handleFailedLogin("ERROR: HA INTRODUCIDO MAL LOS DATOS DE LA PERSONA, POR FAVOR VUELVA A INTRODUCIRLOS");
                 }
-            } catch (LimitLoginException ex) {
-                JOptionPane.showMessageDialog(insertWindow, ex.getMessage(), "Error de Inserción",
-                        JOptionPane.ERROR_MESSAGE);
-                System.exit(1);
+            } catch (NumberFormatException ex) {
+                handleFailedLogin("ERROR: El número de empleado debe ser un número válido.");
             }
+        }
+    }
+
+    private void handleFailedLogin(String errorMessage) {
+        loginAttempts++;
+        JOptionPane.showMessageDialog(insertWindow, errorMessage, "Error de Inserción", JOptionPane.ERROR_MESSAGE);
+        if (loginAttempts >= MAX_LOGIN_ATTEMPTS) {
+            JOptionPane.showMessageDialog(insertWindow,
+                    "Se han excedido los intentos de inicio de sesión.",
+                    "Error de Inserción", JOptionPane.ERROR_MESSAGE);
+            System.exit(1);
         }
     }
 }
