@@ -1,6 +1,6 @@
 package views;
 
-import java.awt.EventQueue;
+import java.awt.EventQueue; 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -44,6 +44,7 @@ public class LoginView extends JFrame implements ActionListener {
 
     public LoginView() {
         initialize();
+ 
     }
 
     private void initialize() {
@@ -103,6 +104,8 @@ public class LoginView extends JFrame implements ActionListener {
     private void handleFailedLogin(String errorMessage) {
         loginAttempts++;
         JOptionPane.showMessageDialog(insertWindow, errorMessage, "Error de Inserción", JOptionPane.ERROR_MESSAGE);
+        textField.setText("");
+        passwordField.setText(""); 
         if (loginAttempts >= MAX_LOGIN_ATTEMPTS) {
             JOptionPane.showMessageDialog(insertWindow,
                     "Se han excedido los intentos de inicio de sesión.",
@@ -110,4 +113,5 @@ public class LoginView extends JFrame implements ActionListener {
             System.exit(1);
         }
     }
+
 }
