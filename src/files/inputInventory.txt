@@ -1,0 +1,2 @@
+Product:awa;Wholesaler Price:10.00;Stock:10; 
+Product:hehe;Wholesaler Price:5.00;Stock:20;

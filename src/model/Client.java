@@ -1,51 +1,63 @@
 package model;
 
 import main.Payable;
+import dao.Dao; 
+import dao.DaoImplJDBC;
 
 public class Client extends Person implements Payable {
-    private int memberId;
-    private Amount balance;
-    private static final int MEMBER_ID = 456;
-    private static final double INITIAL_BALANCE = 50.00;
 
-    public Client() {
-        this.memberId = MEMBER_ID; 
-        this.balance = new Amount(INITIAL_BALANCE); 
-    }
+	private int member_id;
+	private Amount balance;
+    public Dao dao;
 
-    @Override
-    public boolean pay(Amount amount) {
-        double newBalance = this.balance.getValue() - amount.getValue();
-        if (newBalance >= 0) {
-            this.balance.setValue(newBalance);
-            return true;
-        }
-        return false; 
-    }
+	
+	public Client(String name) {
+		super(name);
+        this.dao = new DaoImplJDBC();
+	}
 
-    // Getters y Setters
-    public int getMemberId() {
-        return this.memberId;
-    }
+	public boolean pay(Amount amount) {
+	this.balance.setValue(this.balance.getValue() - amount.getValue());
+	if(this.balance.getValue() < 0) {
+		return false;
+	}
+	return true;
+	}
 
-    public void setMemberId(int memberId) {
-        this.memberId = memberId;
-    }
+	public int getMember_id() {
+		return member_id;
+	}
 
-    public Amount getBalance() {
-        return this.balance;
-    }
+	public void setMember_id(int member_id) {
+		this.member_id = member_id;
+	}
 
-    public void setBalance(Amount balance) {
-        this.balance = balance;
-    }
+	public Amount getBalance() {
+		return balance;
+	}
 
-    @Override
-    public String getName() {
-        return this.name; // Asumiendo que Person tiene un atributo 'name' protegido
-    }
+	public void setBalance(Amount balance) {
+		this.balance = balance;
+	}
+	
 
-    public void setName(String name) {
-        this.name = name; // Asumiendo que Person tiene un atributo 'name' protegido
-    }
+
+
+	@Override
+	public boolean findClient(int member_id) {
+		  dao.connect();
+	        Client client = dao.getMember_id(member_id);
+	        dao.disconnect();
+
+	        if (client != null) {
+	            this.member_id = client.getMember_id();
+	            this.balance = client.getBalance();
+	            
+	            return true;
+	        }
+	        return false;
+	}
+
+	
+	
 }
