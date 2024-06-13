@@ -1,6 +1,7 @@
 package dao;
 
 import model.Employee;
+import model.Client;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -40,6 +41,32 @@ public class DaoImplJDBC implements Dao {
         }
         return employee;
     }
+    
+    @Override
+    public Client getMember_id(int memberId) {
+    	Client client = null;
+    	  try {
+    		  String query = "SELECT * FROM client WHERE memberId = ?";
+              PreparedStatement statement = connection.prepareStatement(query);
+              statement.setInt(1, memberId);
+
+
+              ResultSet resultSet = statement.executeQuery(); 
+              	if (resultSet.next()) {
+                  client = new Client(resultSet.getString("memberName"));
+                  client.setMember_id(resultSet.getInt("memberId"));
+
+              	}
+    		  
+          } catch (SQLException e) {
+              e.printStackTrace();
+          }
+          return client;
+    	  
+    	
+
+    }
+    
 
     @Override
     public void disconnect() {
@@ -52,3 +79,13 @@ public class DaoImplJDBC implements Dao {
         }
     }
 }
+
+
+
+
+
+
+
+// Hacer set-Insert (cuando es nuevo)
+// Hacer find-Select (para ver si existe)
+// Si no existe, hacer set-insert

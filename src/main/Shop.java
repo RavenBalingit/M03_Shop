@@ -1,6 +1,8 @@
 package main;
 
 import model.*;
+import views.ShopView;
+
 import java.io.*;
 import java.nio.file.*;
 import java.time.*;
@@ -207,50 +209,76 @@ public class Shop {
 		// ask for client name
 		ArrayList<Product> products = new ArrayList<Product>();
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Realizar venta, escribir nombre cliente");
-		String nameClient = sc.nextLine();
-		// sale product until input name is not 0
-		double totalAmount = 0.0;
-		String name = "";	
-		while (!name.equals("0")) {
-			System.out.println("Introduce el nombre del producto, escribir 0 para terminar:");
-			name = sc.nextLine();
-
-			if (name.equals("0")) {
-				break;
-			}
-			Product product = findProduct(name);
-			boolean productAvailable = false;
-
-			if (product != null && product.isAvailable()) {
-
-				productAvailable = true;
-				totalAmount += product.getPublicPrice().getValue();
-				product.setStock(product.getStock() - 1);
-				// if no more stock, set as not available to sale
-				if (product.getStock() == 0) {
-					product.setAvailable(false);
-				}
-				products.add(product);
-				System.out.println("Producto añadido con éxito");
-			}
-
-			if (!productAvailable) {
-				System.out.println("Producto no encontrado o sin stock");
-			}
-		}
-		LocalDateTime myDateObj = LocalDateTime.now();
-		Client client = new Client (nameClient);
-		Amount total = new Amount (totalAmount);
-		total.setValue(total.getValue() * TAX_RATE);
-		sales.add(new Sale(client, products, total, myDateObj));
-		// show cost total
 		
-		cash.setValue(total.getValue() + cash.getValue());
-		System.out.println("Venta realizada con éxito, total: " + total);
-		if (!client.pay(total)) {
-			System.out.println("El cliente debe: " + client.getBalance());
-		}
+		
+		
+		System.out.println("Realizar venta, escribir ID cliente");
+
+
+		 
+		 Client client = new Client(null);
+            try {
+            	int IdClient = Integer.parseInt(sc.next());
+
+                if (client.findClient(IdClient)){
+                    System.out.println("Cliente Correctamente Iniciado");
+               	 
+            		double totalAmount = 0.0;
+            		String name = "";	
+            		while (!name.equals("0")) {
+            			System.out.println("Introduce el nombre del producto, escribir 0 para terminar:");
+            			name = sc.nextLine();
+
+            			if (name.equals("0")) {
+            				break;
+            			}
+            			Product product = findProduct(name);
+            			boolean productAvailable = false;
+
+            			if (product != null && product.isAvailable()) {
+
+            				productAvailable = true;
+            				totalAmount += product.getPublicPrice().getValue();
+            				product.setStock(product.getStock() - 1);
+            				// if no more stock, set as not available to sale
+            				if (product.getStock() == 0) {
+            					product.setAvailable(false);
+            				}
+            				products.add(product);
+            				System.out.println("Producto añadido con éxito");
+            			}
+
+            			if (!productAvailable) {
+            				System.out.println("Producto no encontrado o sin stock");
+            			}
+            		}
+            		LocalDateTime myDateObj = LocalDateTime.now();
+            		Amount total = new Amount (totalAmount);
+            		total.setValue(total.getValue() * TAX_RATE);
+            		sales.add(new Sale(client, products, total, myDateObj));
+            		// show cost total
+            		
+            		cash.setValue(total.getValue() + cash.getValue());
+            		System.out.println("Venta realizada con éxito, total: " + total);
+            		if (!client.pay(total)) {
+            			System.out.println("El cliente debe: " + client.getBalance());
+            		}
+                    
+                    
+                    
+                    
+                } else {
+                	System.out.println("ERROR: HA INTRODUCIDO MAL LOS DATOS DE LA PERSONA, POR FAVOR VUELVA A INTRODUCIRLOS");
+                }
+            } catch (NumberFormatException ex) {
+            	System.out.println("ERROR: El número de empleado debe ser un número válido.");
+            }
+		 
+		 
+		 
+		 
+		 
+	
 	}
 
 	/**

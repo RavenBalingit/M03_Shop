@@ -1,6 +1,9 @@
 package dao;
 
-import model.Employee;
+import model.Employee; 
+import model.Client;
+
+
 
 public interface Dao {
     
@@ -8,5 +11,10 @@ public interface Dao {
     
     Employee getEmployee(int employeeId, String password);
     
+    Client getMember_id(int memberId);
+
+    
     void disconnect();
+
+	
 }

@@ -1,18 +1,19 @@
 package model;
 
 import main.Payable;
+import dao.Dao; 
+import dao.DaoImplJDBC;
 
 public class Client extends Person implements Payable {
-	
-	final int MEMBER_ID = 456;
-	final double BALANCE = 50;
-	private int member_id = MEMBER_ID;
-	private Amount balance = new Amount (BALANCE);
-	
+
+	private int member_id;
+	private Amount balance;
+    public Dao dao;
 
 	
 	public Client(String name) {
 		super(name);
+        this.dao = new DaoImplJDBC();
 	}
 
 	public boolean pay(Amount amount) {
@@ -38,4 +39,25 @@ public class Client extends Person implements Payable {
 	public void setBalance(Amount balance) {
 		this.balance = balance;
 	}
+	
+
+
+
+	@Override
+	public boolean findClient(int member_id) {
+		  dao.connect();
+	        Client client = dao.getMember_id(member_id);
+	        dao.disconnect();
+
+	        if (client != null) {
+	            this.member_id = client.getMember_id();
+	            this.balance = client.getBalance();
+	            
+	            return true;
+	        }
+	        return false;
+	}
+
+	
+	
 }
