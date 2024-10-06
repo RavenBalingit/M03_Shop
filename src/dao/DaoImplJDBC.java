@@ -1,91 +1,73 @@
 package dao;
 
-import model.Employee;
-import model.Client;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+
+import model.Employee;
+import model.Product;
 
 public class DaoImplJDBC implements Dao {
-    private Connection connection;
 
-    @Override
-    public void connect() {
-        try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:8889/shop", "root", "root");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+	private Connection conn;
+	
+	@Override
+	public void connect() {
+		// Define connection parameters
+		String url = "jdbc:mysql://localhost:3306/SHOPSILES2";
+		String user = "root";
+		String pass = "";
+		try {
+			this.conn = DriverManager.getConnection(url, user, pass);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
-    @Override
-    public Employee getEmployee(int employeeId, String password) {
-        Employee employee = null;
-        try {
-            String query = "SELECT * FROM employee WHERE employeeId = ? AND password = ?";
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, employeeId);
-            statement.setString(2, password);
-            ResultSet resultSet = statement.executeQuery();
+	public Employee getEmployee(int employeeId, String password) {
+		
+		Employee employee = null;
+		String query = "select employeeId, employeePassword from Employee where employeeId = ? AND employeePassword = ?";
+		try (PreparedStatement ps = conn.prepareStatement(query)) { 
+			// set id to search for
+			ps.setInt(1,employeeId);
+			ps.setString(2,password);
+		  	//System.out.println(ps.toString());
+	        try (ResultSet rs = ps.executeQuery()) {
+	        	if (rs.next()) {
+	        		employee =  new Employee(rs.getInt(1), rs.getString(2));            		            				
+	        	}
+	        }
+	    } catch (SQLException e) {
+			// in case error in SQL
+			e.printStackTrace();
+		}
+		return employee;
+	}
 
-            if (resultSet.next()) {
-                employee = new Employee(resultSet.getString("name"));
-                employee.setEmployeeId(resultSet.getInt("employeeId"));
-                employee.setPassword(resultSet.getString("password"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return employee;
-    }
-    
-    @Override
-    public Client getMember_id(int memberId) {
-    	Client client = null;
-    	  try {
-    		  String query = "SELECT * FROM client WHERE memberId = ?";
-              PreparedStatement statement = connection.prepareStatement(query);
-              statement.setInt(1, memberId);
+	@Override
+	public void disconnect() throws SQLException {
+		if(conn != null) {
+			conn.close();
+		}
+		
+	}
 
 
-              ResultSet resultSet = statement.executeQuery(); 
-              	if (resultSet.next()) {
-                  client = new Client(resultSet.getString("memberName"));
-                  client.setMember_id(resultSet.getInt("memberId"));
+	public ArrayList<Product> getInventory() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-              	}
-    		  
-          } catch (SQLException e) {
-              e.printStackTrace();
-          }
-          return client;
-    	  
-    	
+	
+	public boolean writeInventory(ArrayList<Product> inventory) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    }
-    
 
-    @Override
-    public void disconnect() {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+
 }
-
-
-
-
-
-
-
-// Hacer set-Insert (cuando es nuevo)
-// Hacer find-Select (para ver si existe)
-// Si no existe, hacer set-insert

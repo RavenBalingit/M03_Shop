@@ -1,46 +1,58 @@
 package model;
 
-import dao.Dao; 
+import java.sql.SQLException;
+
 import dao.DaoImplJDBC;
 
-public class Employee extends Person implements main.Logable {
-    private int employeeId;
-    private String password;
-    private Dao dao;
+public class Employee extends Person {
 
-    public Employee(String name) {
-        super(name);
-        this.dao = new DaoImplJDBC();
+	private int employeeId;
+	
+	final static int USER = 123;
+    private String password = "test";
+
+	public Employee(int employeeId, String password) {
+		super(null);
+		this.employeeId = employeeId;
+		this.password = password;
+	}
+
+	public int getEmployeeId() {
+		return employeeId;
+	}
+
+	public void setEmployeeId(int employeeId) {
+		this.employeeId = employeeId;
+	}
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	public boolean login(int user, String password) {
+    	
+	// Connect to database data.	
+/*
+		  DaoImplJDBC dao = new DaoImplJDBC();
+		  
+		  dao.connect(); System.out.println("Conectado"); Employee employee =
+		  dao.getEmployee(user, password); try { dao.disconnect(); } catch
+		  (SQLException e) { e.printStackTrace(); }
+		  
+		  if(employee == null) { return false; }else{ return true; }
+*/		 
+		
+		
+	// Simple form of Login.
+		  
+		if((user == USER) && (password == this.password)){
+			return true;
+		}else {
+			return false;
+		}
+
     }
-
-    public int getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(int employeeId) {
-        this.employeeId = employeeId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public boolean login(int user, String password) {
-        dao.connect();
-        Employee employee = dao.getEmployee(user, password);
-        dao.disconnect();
-
-        if (employee != null) {
-            this.employeeId = employee.getEmployeeId();
-            this.setName(employee.getName());
-            this.password = employee.getPassword();
-            return true;
-        }
-        return false;
-    }
+    
 }

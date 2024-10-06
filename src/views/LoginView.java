@@ -1,117 +1,119 @@
 package views;
 
-import java.awt.EventQueue; 
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+
+import exception.LimitLoginException;
+import main.Shop;
+import model.Employee;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-
-import model.Employee;
-import exception.LimitLoginException;
-
 public class LoginView extends JFrame implements ActionListener {
 
-    private static final long serialVersionUID = 1L;
-    JDialog insertWindow;
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private JTextField textField;
+	private JTextField textField_1;
+	private int loginAttempts = 0;
+	
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					LoginView frame = new LoginView();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
-    private JButton btnNewButton;
-    private JTextField textField;
-    private JPasswordField passwordField;
-    private JFrame frame;
-    JLabel lblNewLabel_1;
+	/**
+	 * Create the frame.
+	 */
+	public LoginView() {
+		setTitle("Login view");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
-    private int loginAttempts = 0;
-    private static final int MAX_LOGIN_ATTEMPTS = 3;
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel userLabel = new JLabel("User");
+		userLabel.setBounds(70, 35, 61, 16);
+		contentPane.add(userLabel);
+		
+		textField = new JTextField();
+		textField.setBounds(120, 65, 130, 26);
+		contentPane.add(textField);
+		textField.setColumns(10);
+		
+		JLabel passLabel = new JLabel("Password");
+		passLabel.setBounds(70, 120, 61, 16);
+		contentPane.add(passLabel);
+		
+		textField_1 = new JTextField();
+		textField_1.setBounds(120, 155, 130, 26);
+		contentPane.add(textField_1);
+		textField_1.setColumns(10);
+		
+		JButton logedButton = new JButton("Login");
+		logedButton.setBounds(300, 200, 117, 29);
+		contentPane.add(logedButton);
+		logedButton.addActionListener(this);
+		
+	}
 
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    LoginView frame = new LoginView();
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
+	public void actionPerformed(ActionEvent e) {
+		try {	
+			int userId = Integer.parseInt(textField.getText());
+			String userPass = textField_1.getText();
+			Employee employee = new Employee(userId, userPass);
+			if(employee.login(userId, userPass) == true) {
+				ShopView shopView = new ShopView();
+		        shopView.setVisible(true);
+		        this.dispose();
+			} else {
+				JOptionPane.showMessageDialog(this,
+						"ERROR: data is wrong",
+						"Error de Inserción", JOptionPane.ERROR_MESSAGE);
+				textField.setText("");
+				textField_1.setText("");
+				loginAttempts += 1;
+				if (loginAttempts > 2) {
+                    throw new LimitLoginException();
                 }
-            }
-        });
-    }
-
-    public LoginView() {
-        initialize();
- 
-    }
-
-    private void initialize() {
-        frame = new JFrame();
-        frame.setBounds(400, 100, 745, 520);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        setTitle("Login");
-        setSize(414, 298);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        getContentPane().setLayout(null);
-
-        JLabel lblNewLabel = new JLabel("Numero Empleado");
-        lblNewLabel.setBounds(6, 79, 115, 16);
-        getContentPane().add(lblNewLabel);
-
-        textField = new JTextField();
-        textField.setBounds(188, 74, 132, 26);
-        getContentPane().add(textField);
-        textField.setColumns(10);
-
-        lblNewLabel_1 = new JLabel("Password");
-        lblNewLabel_1.setBounds(6, 119, 59, 16);
-        getContentPane().add(lblNewLabel_1);
-
-        passwordField = new JPasswordField();
-        passwordField.setBounds(188, 114, 132, 26);
-        getContentPane().add(passwordField);
-
-        btnNewButton = new JButton("Acceder");
-        btnNewButton.setBounds(314, 235, 94, 29);
-        btnNewButton.addActionListener(this);
-        getContentPane().add(btnNewButton);
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnNewButton) {
-            Employee employee = new Employee(null);
-            try {
-                int employeeNumber = Integer.parseInt(textField.getText());
-                String password = new String(passwordField.getPassword());
-                
-                if (employee.login(employeeNumber, password)) {
-                    System.out.println("funciona");
-                    this.setVisible(false);
-                    ShopView miTienda = new ShopView();
-                    miTienda.setVisible(true);
-                } else {
-                    handleFailedLogin("ERROR: HA INTRODUCIDO MAL LOS DATOS DE LA PERSONA, POR FAVOR VUELVA A INTRODUCIRLOS");
-                }
-            } catch (NumberFormatException ex) {
-                handleFailedLogin("ERROR: El número de empleado debe ser un número válido.");
-            }
-        }
-    }
-
-    private void handleFailedLogin(String errorMessage) {
-        loginAttempts++;
-        JOptionPane.showMessageDialog(insertWindow, errorMessage, "Error de Inserción", JOptionPane.ERROR_MESSAGE);
-        textField.setText("");
-        passwordField.setText(""); 
-        if (loginAttempts >= MAX_LOGIN_ATTEMPTS) {
-            JOptionPane.showMessageDialog(insertWindow,
-                    "Se han excedido los intentos de inicio de sesión.",
-                    "Error de Inserción", JOptionPane.ERROR_MESSAGE);
-            System.exit(1);
-        }
-    }
-
+			}
+		} catch (LimitLoginException ex) {
+	        ex.printStackTrace();
+	        JOptionPane.showMessageDialog(this,
+                    "Se han excedido el límite de intentos de inicio de sesión.",
+                    "ERROR", JOptionPane.ERROR_MESSAGE);
+	        System.exit(0);
+	    } catch (NumberFormatException ex) {
+	        ex.printStackTrace();
+	        JOptionPane.showMessageDialog(this,
+					"ERROR: data is wrong",
+					"Error de Inserción", JOptionPane.ERROR_MESSAGE);
+	        System.exit(0);
+	    }
+	}
+	
+	
 }

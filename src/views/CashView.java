@@ -2,77 +2,53 @@ package views;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import main.Shop;
+import model.Amount;
+
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-import model.*;
-import main.*;
-import views.*;
-
-public class CashView extends JDialog implements ActionListener  {
+public class CashView extends JDialog {
 
 	private static final long serialVersionUID = 1L;
-	private final JPanel contentPanel = new JPanel();
-	private JTextField textField;
-	JButton okButton;
-	private JTextField textField_1;
-	private Shop shop;
-
-
-	/**
-	 * Launch the application.
-	 */
-
+	private JTextField cashField;
+	
 	/**
 	 * Create the dialog.
 	 */
-	public CashView(Shop shopInstance) {
-        this.shop = shopInstance;
-        setBounds(100, 100, 450, 300);
-        getContentPane().setLayout(new BorderLayout());
-        contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-        getContentPane().add(contentPanel, BorderLayout.CENTER);
-        contentPanel.setLayout(null);
-        {
-            JLabel lblNewLabel = new JLabel("Dinero total:");
-            lblNewLabel.setBounds(175, 21, 79, 16);
-            contentPanel.add(lblNewLabel);
-        }
-        {
-            textField_1 = new JTextField();
-            textField_1.setBounds(147, 49, 130, 26);
-            contentPanel.add(textField_1);
-            textField_1.setEditable(false);
-            textField_1.setColumns(10);
-            textField_1.setText(String.valueOf(Shop.cash));
-        }
+	public CashView(Shop shop, ShopView shopView) {
+		setTitle("Cash view");
+		setBounds(100, 100, 400, 250);
+		getContentPane().setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("Cash shop:");
+		lblNewLabel.setBounds(50, 50, 80, 20);
+		getContentPane().add(lblNewLabel);
+		
+		cashField = new JTextField();
+		cashField.setBounds(100, 100, 200, 50);
+		cashField.setEditable(false);
+		cashField.setText(shop.showCash());
+		getContentPane().add(cashField);
+		cashField.setColumns(10);
+		//TODO block main frame
 
-        {
-            JPanel buttonPane = new JPanel();
-            buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-            getContentPane().add(buttonPane, BorderLayout.SOUTH);
+		/*
+		 * this.addWindowListener(new WindowAdapter() { public void
+		 * windowClosed(WindowEvent e) { shopView.unlockButtons(); } });
+		 */
+		 
 
-            {
-                okButton = new JButton("OK");
-                okButton.setActionCommand("OK");
-                buttonPane.add(okButton);
-                okButton.addActionListener(this);
-				getRootPane().setDefaultButton(okButton);
-            }
-        }
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == okButton) {
-            this.setVisible(false);
-        }
-    }
+		
+		
+	}
+	
 }

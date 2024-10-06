@@ -1,8 +1,9 @@
 package model;
 
 public class Amount {
+	
 	private double value;
-	private final String currency = "€";
+	final static String CURRENCY = "€";
 	
 	public Amount(double value) {
 		super();
@@ -12,13 +13,19 @@ public class Amount {
 	public double getValue() {
 		return value;
 	}
-	
-	public void setValue(double Value) {
-		this.value = Value;
+	public void setValue(double value) {
+		this.value = value;
 	}
 	
+	public static String getCurrency() {
+		return CURRENCY;
+	}
+
 	@Override
-	public String toString(){
-		return value + currency;
+	public String toString() {
+		return value + CURRENCY;
 	}
+	
+	
+	
 }

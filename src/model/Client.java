@@ -1,35 +1,23 @@
 package model;
 
-import main.Payable;
-import dao.Dao; 
-import dao.DaoImplJDBC;
+public class Client extends Person {
 
-public class Client extends Person implements Payable {
-
-	private int member_id;
+	private int memberld;
 	private Amount balance;
-    public Dao dao;
-
+	final static int MEMBER_ID = 456;
+    final static double BALANCE = 50.00;
 	
 	public Client(String name) {
 		super(name);
-        this.dao = new DaoImplJDBC();
+		this.balance = new Amount(BALANCE);
 	}
 
-	public boolean pay(Amount amount) {
-	this.balance.setValue(this.balance.getValue() - amount.getValue());
-	if(this.balance.getValue() < 0) {
-		return false;
-	}
-	return true;
+	public int getMemberld() {
+		return memberld;
 	}
 
-	public int getMember_id() {
-		return member_id;
-	}
-
-	public void setMember_id(int member_id) {
-		this.member_id = member_id;
+	public void setMemberld(int memberld) {
+		this.memberld = memberld;
 	}
 
 	public Amount getBalance() {
@@ -39,25 +27,17 @@ public class Client extends Person implements Payable {
 	public void setBalance(Amount balance) {
 		this.balance = balance;
 	}
-	
 
+	public boolean pay(Amount saleAmount) {
 
-
-	@Override
-	public boolean findClient(int member_id) {
-		  dao.connect();
-	        Client client = dao.getMember_id(member_id);
-	        dao.disconnect();
-
-	        if (client != null) {
-	            this.member_id = client.getMember_id();
-	            this.balance = client.getBalance();
-	            
-	            return true;
-	        }
-	        return false;
+		balance.setValue(balance.getValue() - saleAmount.getValue());
+		if(balance.getValue() <= 0) {
+			System.out.println("Balance necesary to pay: "+balance);
+			return false;
+		}else {
+			System.out.println("Sale was paid, Cliend balance: "+balance);
+			return true;
+		}
 	}
-
-	
 	
 }

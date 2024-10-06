@@ -3,22 +3,23 @@ package model;
 public class Product {
 	private int id;
     private String name;
-    private Amount publicPrice;
-    private Amount wholesalerPrice;
+    private double publicPrice;
+    private double wholesalerPrice;
     private boolean available;
     private int stock;
     private static int totalProducts;
+    // add final [CORRECTION]
+    final static double EXPIRATION_RATE=0.60;
     
-    static double EXPIRATION_RATE=0.60;
-    
-	public  Product(String name, double wholesalerPrice, boolean available, int stock) {
+	public Product(String name, Amount amount, boolean available, int stock) {
 		super();
 		this.id = totalProducts+1;
 		this.name = name;
-		this.wholesalerPrice = new Amount(wholesalerPrice);
+		//add the publicPrice [CORRECTION]
+		this.publicPrice = amount.getValue() * 2;
+		this.wholesalerPrice = amount.getValue();
 		this.available = available;
 		this.stock = stock;
-		this.publicPrice = new Amount(wholesalerPrice *2);
 		totalProducts++;
 	}
 
@@ -33,25 +34,24 @@ public class Product {
 	public String getName() {
 		return name;
 	}
-	
 
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	public Amount getPublicPrice() {
+	public double getPublicPrice() {
 		return publicPrice;
 	}
 
-	public void setPublicPrice(Amount publicPrice) {
+	public void setPublicPrice(double publicPrice) {
 		this.publicPrice = publicPrice;
 	}
 
-	public Amount getWholesalerPrice() {
+	public double getWholesalerPrice() {
 		return wholesalerPrice;
 	}
 
-	public void setWholesalerPrice(Amount wholesalerPrice) {
+	public void setWholesalerPrice(double wholesalerPrice) {
 		this.wholesalerPrice = wholesalerPrice;
 	}
 
@@ -66,7 +66,7 @@ public class Product {
 	public int getStock() {
 		return stock;
 	}
-
+	
 	public void setStock(int stock) {
 		this.stock = stock;
 	}
@@ -80,16 +80,17 @@ public class Product {
 	}
 	
 	public void expire() {
-		publicPrice.setValue(publicPrice.getValue()*EXPIRATION_RATE);
+		this.publicPrice = this.getPublicPrice()*EXPIRATION_RATE;
 	}
-
+// Create toString [CORRECTION]
 	@Override
 	public String toString() {
-		return "Product [name=" + name + ", publicPrice=" + publicPrice + ", wholesalerPrice="
-				+ wholesalerPrice + ", stock=" + stock + "]";
+		return "Product [name=" + name + ", publicPrice=" + publicPrice + ", stock=" + stock + "]";
 	}
 	
+	
 
+    
 
     
 }

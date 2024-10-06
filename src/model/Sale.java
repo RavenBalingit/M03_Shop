@@ -1,20 +1,25 @@
 package model;
+
+import java.awt.event.MouseAdapter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.logging.Formatter;
 
 public class Sale {
-	Client client;
-	private  ArrayList<Product> products;
-	Amount amount;
-	LocalDateTime time;
-
-	public Sale(Client client, ArrayList<Product> products , Amount amount, LocalDateTime time) {
+	//client be Client type
+	private Client client;
+	private ArrayList<Product> products;
+	private Amount amount;
+	private LocalDateTime date;
+	
+	public Sale(Client client, ArrayList<Product> products, Amount amount, LocalDateTime date) {
 		super();
 		this.client = client;
 		this.products = products;
 		this.amount = amount;
-		this.time = time;
+		this.date = date;
 	}
 
 	public Client getClient() {
@@ -40,30 +45,23 @@ public class Sale {
 	public void setAmount(Amount amount) {
 		this.amount = amount;
 	}
+	
+	public LocalDateTime getDate() {
+		return date;
+	}
+
+	public void setDate(LocalDateTime date) {
+		this.date = date;
+	}
 
 	@Override
-	public String toString() {
-		String productNames ="";
-	    DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-		String client = "\nClient:" +  this.client.getName().toUpperCase() + "\n" ;
-		for (Product product : this.products) {
-			if (product != null) {
-				if (product.getName() != null) {
-					productNames += product.getName() + " Cost: " + product.getPublicPrice() +"\n";
-				
-				}
-			}
-		}
-		return client + "products:\n" + productNames + "amount=[" + amount + "]\n" + "time=[" + time.format(myFormatObj) + "]";
-
-	}
-
-	public LocalDateTime getTime() {
-		return time;
-	}
-
-	public void setTime(LocalDateTime time) {
-		this.time = time;
+	public String toString() {	
+		DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyy HH:mm:ss");
+		String formattedDate = date.format(myFormatObj);
+		
+		return "Sale [client=" + client + ", products="+ products.toString() 
+		+", amount=" + amount + Amount.getCurrency() 
+		+ " Date:"+ formattedDate +"]";
 	}
 
 }

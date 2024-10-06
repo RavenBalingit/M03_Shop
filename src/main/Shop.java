@@ -1,34 +1,63 @@
 package main;
 
-import model.*;
-import views.ShopView;
+import model.Amount;
+import model.Client;
+import model.Employee;
+import model.Product;
+import model.Sale;
 
-import java.io.*;
-import java.nio.file.*;
-import java.time.*;
+import java.awt.Button;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Scanner;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.Scanner;
+
+import dao.DaoImplFile;
 
 public class Shop {
-	public static Amount cash = new Amount(100);
-	private static ArrayList<Product> inventory = new ArrayList<Product>();
-	private static ArrayList<Sale> sales = new ArrayList<Sale>();
-	private int Stock = 0;
+	private Amount cash = new Amount(100.00);
+	private ArrayList<Product> inventory;
+	private int numberProducts;
+	private ArrayList<Sale> sales;
+	private boolean errorMethot = true;
 	final static double TAX_RATE = 1.04;
+	//create a new variable to count the sales of the shop.
+	private int countSales;
+	private DaoImplFile dao = new DaoImplFile();
+	
+	public Shop() {
+		// cash = 0.0; initial cash = 100.00 [CORRECTION]
+	// Change array inventory to ArrayList inventory
+		inventory = new ArrayList<Product>();		
+		//create a new sales array to inset the sales [CORRECTION]
+		sales = new ArrayList<Sale>();
+		countSales = 0;
+		loadInventoryFile();
+	}
 
 	public static void main(String[] args) {
 		Shop shop = new Shop();
 
-		shop.loadInventory();
-		while(!shop.initSesion()) {
-			continue;
-		}
+			//shop.loadInventory();
+			shop.readInventory();
 		
 		Scanner scanner = new Scanner(System.in);
 		int opcion = 0;
 		boolean exit = false;
+		
+// UF4 create initSession using Employee obj
+	shop.initSession();
 
 		do {
 			System.out.println("\n");
@@ -42,8 +71,8 @@ public class Shop {
 			System.out.println("5) Ver inventario");
 			System.out.println("6) Venta");
 			System.out.println("7) Ver ventas");
-			System.out.println("8) Eliminar producto");
-			System.out.println("9) Ver valor total de ventas");
+			System.out.println("8) Ver Precio total de ventas");
+			System.out.println("9) Eliminar producto");
 			System.out.println("10) Salir programa");
 			System.out.print("Seleccione una opción: ");
 			opcion = scanner.nextInt();
@@ -54,11 +83,11 @@ public class Shop {
 				break;
 
 			case 2:
-				shop.addProduct();
+				shop.addNewProduct(null, 0, new Amount(0));
 				break;
 
 			case 3:
-				shop.addStock();
+				shop.addStock(null, 0);
 				break;
 
 			case 4:
@@ -76,102 +105,209 @@ public class Shop {
 			case 7:
 				shop.showSales();
 				break;
-
+			// Create new case to calculate total amount in ventas
 			case 8:
-				shop.confirmDeleteProduct(null);
+				shop.showAmountVentas();
 				break;
-
 			case 9:
-				shop.showTotalSale();
+				shop.deleteProduct(null);
 				break;
-
+			// Change case 8 for case 10. [CORRECTION]
 			case 10:
 				exit = true;
 				break;
+			// Add text if the option is not correct [CORRECTION]
+			default:System.out.println("This option not exist");
 			}
-
+			
 		} while (!exit);
-		System.out.println("Gracias por comprar en miTienda.com");
+		
 	}
 
 	/**
 	 * load initial inventory to shop
 	 */
 	public void loadInventory() {
-		Path filePath = Paths.get("src//files", "inputInventory.txt");
-
-		try
-
-		{
-			String content = Files.readString(filePath);
-			// reading file from given path
-			String[] list = content.split(";");
-			for (int i = 0; i < list.length - 1; i += 3) {
-				String[] name = list[i].split(":");
-				String[] wholeaSalerPrice = list[i + 1].split(":");
-				String[] stock = list[i + 2].split(":");
-				 Product result  = findProduct(name[1]);
-					if(alreadyExists(name[1]) == false) {						
-						addProduct(new Product(name[1], Double.valueOf(wholeaSalerPrice[1]), true, Integer.valueOf(stock[1])));
-					}else {
-						System.out.println("Producto con mismo nombre");
-					}
-				
-
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		
+		addProduct(new Product("Manzana", new Amount(10.00), true, 10));
+		addProduct(new Product("Pera", new Amount(20.00), true, 20));
+		addProduct(new Product("Hamburguesa", new Amount(30.00), true, 30));
+		addProduct(new Product("Fresa", new Amount(5.00), true, 20));
+		
 	}
+	
+	public void loadInventoryFile() {
+        try {
+            String dirPath = System.getProperty("user.dir") + File.separator + "files";
+            File dir = new File(dirPath);
 
+            if (!dir.exists()) {
+                dir.mkdir();
+            }
+
+            File f = new File(dirPath + File.separator + "inputInventory.txt");
+
+            if (f.exists()) {
+                readInventory();
+            } else {
+                System.out.println("File created: " + f.getName());
+                loadInventory();
+
+                try (FileWriter myWriter = new FileWriter(f)) {
+                    for (Product product : inventory) {
+                        if (product != null) {
+                            myWriter.write("Product:" + product.getName() + ";Wholesaler Price:"
+                                    + product.getWholesalerPrice() + ";Stock:" + product.getStock() + ";\n");
+                        }
+                    }
+                    System.out.println("File inventory finished");
+                }
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error al cargar el archivo de inventario.");
+            e.printStackTrace();
+        }
+    }
+	
+	// Read inventory file or create a new one if not exist
+	public void readInventory() {
+		
+		inventory = dao.getInventory();
+	}
+	
+	// Write new products to file inventory.txt
+	public boolean writeInventory() {
+		
+		return dao.writeInventory(inventory);
+		/*
+		 * boolean isWrited = false; try { File fileInventory = new
+		 * File("inputInventory.txt"); FileWriter myWriter = new
+		 * FileWriter("inputInventory.txt"); if(fileInventory.exists()) { for (Product
+		 * product : inventory) { if (product != null) {
+		 * myWriter.write("Product:"+product.getName()+";Wholesaler Price:"
+		 * +product.getWholesalerPrice()+";Stock:"+product.getStock()+";\n"); } }
+		 * System.out.println("File inventory finished"); myWriter.close(); isWrited =
+		 * true; } } catch (IOException e) {
+		 * System.out.println("Error: Archivo no encontrado"); e.printStackTrace(); }
+		 */
+	}
+	
+	// write the new sales in the fileSales
+	private void updateFileSales() {
+		int numberSale = 1;
+		
+		try {
+        	//create file
+			LocalDate dateSaleFile = LocalDate.now();
+            File fileSales = new File("sales"+dateSaleFile+".txt");
+            if(fileSales.createNewFile()) {
+            	System.out.println("File created: " + fileSales.getName());
+            }else{
+            	System.out.println("uploading file");
+            	fileSales.delete();	
+            }
+            
+            //write on the file the information
+            FileWriter myWriter = new FileWriter("sales"+dateSaleFile+".txt");
+            for (Sale sale : sales) {
+    			if (sale != null) {
+    					myWriter.write(numberSale+"; Cliente="+sale.getClient()+
+    							";Date="+sale.getDate()+";\n");  
+    					for (Product product : inventory) {
+    		    			if (product != null) {
+    		    				myWriter.write(numberSale+";Products="+product.getName()+","
+    		    			+product.getPublicPrice()+";");  
+    		    			}
+    		    		}	
+    					myWriter.write("\n"+numberSale+";Amount="+sale.getAmount()+";\n");
+    				numberSale++;
+    			}
+    		}
+            System.out.println("File finished");
+            myWriter.close();
+            
+        } catch (IOException e) {
+            System.out.println("Error: Archivo no encontrado");
+            e.printStackTrace();
+        }
+		
+	}
+	
 	/**
-	 * show current total cash
+	 * show current total cash 
 	 */
-	public static void showCash() {
-		System.out.println(String.valueOf(cash));
+	
+	// Show total cash [CORRECTION] Change to return String
+	public String showCash() {
+		String cashValue = cash.toString();
+		return cashValue;
 	}
 
 	/**
 	 * add a new product to inventory getting data from console
+	 * @return 
 	 */
-	public void addProduct() {
-
-		Scanner scanner = new Scanner(System.in);
-		System.out.print("Nombre: ");
-		String name = scanner.nextLine();
-		if(alreadyExists(name) == false) {
-		System.out.print("Precio mayorista: ");
-		double wholesalerPrice = scanner.nextDouble();
-		System.out.print("Stock: ");
-		int stock = scanner.nextInt();
-		addProduct(new Product(name, wholesalerPrice, true, stock));
-		}else {
-			System.out.println("Nombre del producto ya existe");
-		}
+	
+	// changed the name of methot [CORRECTION]
+	public boolean addNewProduct(String name, int stock, Amount price) {
+		/*
+		* Scanner scanner = new Scanner(System.in);
+		* System.out.print("Nombre: ");
+		* String name = scanner.nextLine();
+		*/
+		// check if name exist if not return nothing [CORRECTION]
+		Product product = findProduct(name);
+			if(product != null){
+				//System.out.println("The product alredy exists");
+				errorMethot = false;
+			}else {
+				errorMethot = true;
+				addProduct(new Product(name, price, true, stock));
+			}
+		/*
+		*	System.out.print("Precio mayorista: ");
+		*	double wholesalerPrice = scanner.nextDouble();
+		*	System.out.print("Stock: ");
+		*	int stock = scanner.nextInt();
+		 */
+		
+		return errorMethot;
 	}
 
 	/**
 	 * add stock for a specific product
 	 */
-	public void addStock() {
-		Scanner scanner = new Scanner(System.in);
-		System.out.print("Seleccione un nombre de producto: ");
-		String name = scanner.next();
+	public boolean addStock(String name, int stock) {
+		/*
+		* Scanner scanner = new Scanner(System.in);
+		* System.out.print("Seleccione un nombre de producto: ");
+		* String name = scanner.next();
+		*/
 		Product product = findProduct(name);
 
 		if (product != null) {
-			// ask for stock
-			System.out.print("Seleccione la cantidad a añadir: ");
-			Stock = scanner.nextInt();
-			// update stock product
-			product.setStock(product.getStock() + Stock);
+		//make available if stock = 0 [CORRECTION]
+			if(product.getStock() == 0) {
+				product.setAvailable(true);
+			}
+		// ask for stock
+		//System.out.println(product.getStock()); Stock after change
+			/*
+			* System.out.print("Seleccione la cantidad a añadir: ");
+			* int stock = scanner.nextInt();
+			*/
+		// update stock product
+		//plus the stock that you write [CORRECTION]
+			product.setStock(product.getStock() + stock);
 			System.out.println("El stock del producto " + name + " ha sido actualizado a " + product.getStock());
-
+			errorMethot = true;
+			//System.out.println(product.getStock()); Stock before change
 		} else {
-			System.out.println("No se ha encontrado el producto con nombre " + name);
+			//System.out.println("No se ha encontrado el producto con nombre " + name);
+			errorMethot = false;
 		}
+		return errorMethot;
 	}
 
 	/**
@@ -181,11 +317,13 @@ public class Shop {
 		Scanner scanner = new Scanner(System.in);
 		System.out.print("Seleccione un nombre de producto: ");
 		String name = scanner.next();
+
 		Product product = findProduct(name);
-		product.expire();
+
 		if (product != null) {
-			System.out.println("El stock del producto " + product.getName() + " ha sido actualizado a "
-					+ product.getPublicPrice());
+			//use methot expire() [CORRECTION]
+			product.expire();
+			System.out.println("El stock del producto " + name + " ha sido actualizado a " + product.getPublicPrice());
 
 		}
 	}
@@ -195,11 +333,18 @@ public class Shop {
 	 */
 	public void showInventory() {
 		System.out.println("Contenido actual de la tienda:");
-		for (Product product : inventory) {
-			if (product != null) {
-				System.out.println(product);
-			}
-		}
+		try {
+			File fileInventory = new File("inputInventory.txt");
+		    Scanner myReader = new Scanner(fileInventory);
+		      while (myReader.hasNextLine()) {
+		        String data = myReader.nextLine();
+		        System.out.println(data);
+		      }
+		      myReader.close();
+		    } catch (FileNotFoundException e) {
+		      System.out.println("An error occurred.");
+		      e.printStackTrace();
+		    }
 	}
 
 	/**
@@ -207,226 +352,196 @@ public class Shop {
 	 */
 	public void sale() {
 		// ask for client name
+	//Create account Products
 		ArrayList<Product> products = new ArrayList<Product>();
+		
 		Scanner sc = new Scanner(System.in);
+		System.out.println("Realizar venta, escribir nombre cliente");
+		String nameClient = sc.nextLine();
+	//Create object Client 
+		Client client = new Client(nameClient);
+		// sale product until input name is not 0
+		Amount totalAmount = new Amount(0);
+		String name = "";
+		while (!name.equals("0")) {
+// show the list of products [CORRECTION]
+			for (int i=0;i<inventory.size();i++) {
+			      
+			      System.out.println(inventory.get(i));
+			    }
+			System.out.println("Introduce el nombre del producto, escribir 0 para terminar:");
+			name = sc.nextLine();
+			
+			if (name.equals("0")) {
+				break;
+			}
+			Product product = findProduct(name);
+			boolean productAvailable = false;
+
+			if (product != null && product.isAvailable()) {
+				productAvailable = true;
+				double sum = totalAmount.getValue() + product.getPublicPrice();
+				totalAmount.setValue(sum); 
+				product.setStock(product.getStock() - 1);
+				// if no more stock, set as not available to sale
+				if (product.getStock() == 0) {
+					product.setAvailable(false);
+				}
+				//add product to products
+				System.out.println("Producto añadido con éxito");
+				products.add(product);
+			}
+
+			if (!productAvailable) {
+				System.out.println("Producto no encontrado o sin stock");
+			}
+
+		}
 		
+		// show cost total
+		double sum = totalAmount.getValue() * TAX_RATE;
+		totalAmount.setValue(sum);
+		cash.setValue(totalAmount.getValue() + cash.getValue());
+		System.out.println("Venta realizada con éxito, total " + totalAmount +"\n");
+		client.pay(totalAmount);
+
 		
+		LocalDateTime date = LocalDateTime.now();
 		
-		System.out.println("Realizar venta, escribir ID cliente");
-
-
-		 
-		 Client client = new Client(null);
-            try {
-            	int IdClient = Integer.parseInt(sc.next());
-
-                if (client.findClient(IdClient)){
-                    System.out.println("Cliente Correctamente Iniciado");
-               	 
-            		double totalAmount = 0.0;
-            		String name = "";	
-            		while (!name.equals("0")) {
-            			System.out.println("Introduce el nombre del producto, escribir 0 para terminar:");
-            			name = sc.nextLine();
-
-            			if (name.equals("0")) {
-            				break;
-            			}
-            			Product product = findProduct(name);
-            			boolean productAvailable = false;
-
-            			if (product != null && product.isAvailable()) {
-
-            				productAvailable = true;
-            				totalAmount += product.getPublicPrice().getValue();
-            				product.setStock(product.getStock() - 1);
-            				// if no more stock, set as not available to sale
-            				if (product.getStock() == 0) {
-            					product.setAvailable(false);
-            				}
-            				products.add(product);
-            				System.out.println("Producto añadido con éxito");
-            			}
-
-            			if (!productAvailable) {
-            				System.out.println("Producto no encontrado o sin stock");
-            			}
-            		}
-            		LocalDateTime myDateObj = LocalDateTime.now();
-            		Amount total = new Amount (totalAmount);
-            		total.setValue(total.getValue() * TAX_RATE);
-            		sales.add(new Sale(client, products, total, myDateObj));
-            		// show cost total
-            		
-            		cash.setValue(total.getValue() + cash.getValue());
-            		System.out.println("Venta realizada con éxito, total: " + total);
-            		if (!client.pay(total)) {
-            			System.out.println("El cliente debe: " + client.getBalance());
-            		}
-                    
-                    
-                    
-                    
-                } else {
-                	System.out.println("ERROR: HA INTRODUCIDO MAL LOS DATOS DE LA PERSONA, POR FAVOR VUELVA A INTRODUCIRLOS");
-                }
-            } catch (NumberFormatException ex) {
-            	System.out.println("ERROR: El número de empleado debe ser un número válido.");
-            }
-		 
-		 
-		 
-		 
-		 
-	
+		// Create a new sale and add to array sales [CORRECTION]	
+		Sale sale = new Sale(client, products, totalAmount, date);
+		sales.add(sale);
+		
 	}
-
+	
 	/**
 	 * show all sales
 	 */
 	private void showSales() {
-		Scanner scanner = new Scanner(System.in);
+		Scanner sc = new Scanner(System.in);
+		//View the sales [CORRECTION]
+		boolean check;
+		if(sales != null) {
 		System.out.println("Lista de ventas:");
-		double totalSaleAmount = 0;
-		int counter = 0;
-		for (Sale sale : sales) {
-			if (sale != null) {
-				System.out.println(sale);
-				totalSaleAmount += sale.getAmount().getValue();
-			}
-		}
-
-		System.out.println("Quieres guardarlo en un archivo? (Y/N)");
-		String respuesta = scanner.next();
-		if (respuesta.equals("Y")) {
-			String content = "";
-
-			DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
 			for (Sale sale : sales) {
 				if (sale != null) {
-					counter++;
-					content += counter + ";Client=" + sale.getClient() + ";Date=" + sale.getTime().format(myFormatObj)
-							+ ";\n" + counter + ";Products=";
-
-					for (Product product : sale.getProducts()) {
-						content += product.getName() + "," + product.getPublicPrice() + ";";
-					}
-
-					content += "\n" + counter + ";Amount=" + sale.getAmount() + ";\n";
-
+					System.out.println(sale.toString());
 				}
 			}
-
-			LocalDate date = LocalDate.now();
-			try {
-				try {
-					File file = new File("src\\files\\" + counter + "_" + date + ".txt");
-					if (file.createNewFile()) {
-						System.out.println("File created: " + file.getPath());
-					} else {
-						System.out.println("File already exists.");
-					}
-				} catch (IOException e) {
-					System.out.println("An error occurred.");
-					e.printStackTrace();
-				}
-				PrintWriter out = new PrintWriter(counter + "_" + date + ".txt");
-				out.println(content);
-				out.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+			do {
+				check = false;
+			System.out.println("Do you what to safe this file sales (Y/N)");
+			String button = sc.next();
+			if(button.equalsIgnoreCase("Y")) {
+				updateFileSales();
+				check = true;
+			}else if(button.equalsIgnoreCase("N")) {
+				check = true;
+			}else {
+				System.out.println("Error, please insert Y or N");
 			}
-
-		}
+			}while(check == false);
+		}else {
+			System.out.println("There are not sales");
+		}		
 	}
 
-	/*
+	public void showAmountVentas() {
+		double total = 0;
+		if(sales != null) {
+			for (Sale sale : sales) {
+				if (sale != null) {
+					total += sale.getAmount().getValue();
+				}
+			}
+		}
+		
+		System.out.println("Amount sales = "+total+Amount.getCurrency());
+		
+	}
+// method delete product.	
+	public boolean deleteProduct(String name) {
+		/*
+		* Scanner scanner = new Scanner(System.in);
+		* System.out.print("Seleccione un nombre de producto: ");
+		* String name = scanner.next();
+		*/
+		Product product = findProduct(name);
+		
+		if(product != null) {
+			for (int i=0;i<inventory.size();i++) {
+				if (product != null) {
+					inventory.remove(product);
+					System.out.println(product.getName()+" was deleted");
+					//Rewrite the inventory without the product
+					errorMethot = true;
+				}
+			}
+		}else {
+			System.out.println("This product not exists");
+			errorMethot = false;
+		}
+		return errorMethot;
+	}
+	
+	
+	/**
 	 * add a product to inventory
 	 * 
 	 * @param product
 	 */
 	public void addProduct(Product product) {
-
 		inventory.add(product);
 	}
-
+	
+	
 	/**
 	 * check if inventory is full or not
 	 */
-
-	// show the total amount of all the sales
-
-	public void showTotalSale() {
-		double totalAmount = 0;
-		for (Sale sale : sales) {
-			if (sale != null) {
-				totalAmount += sale.getAmount().getValue();
-			}
-		}
-		System.out.println("El valor total de todas las ventas es: " + totalAmount);
-	}
+	
+	/*
+	 * public boolean isInventoryFull() { 
+	 * 		if (numberProducts == 10) {
+	 *  		return true; 
+	 * 		}else { 
+	 * 			return false; 
+	 * 		} 
+	 * }
+	 */
 
 	/**
 	 * find product by name
 	 * 
 	 * @param product name
 	 */
-	public Product findProduct (String name) {
-
-		Product product;
-
-		for (Iterator iterator = inventory.iterator(); iterator.hasNext();) {
-			product = (Product) iterator.next();
-
-			if (product.getName().equalsIgnoreCase(name)) {
-				return product;
+	public Product findProduct(String name) {
+		for (int i = 0; i < inventory.size(); i++) {
+			// add IgnoreCase to not key sensitive [CORRECTION]
+			if (inventory.get(i) != null && inventory.get(i).getName().equalsIgnoreCase(name)) {
+				return inventory.get(i);
 			}
 		}
 		return null;
-	}
-
-	public void confirmDeleteProduct(String name) {
-		Scanner scanner = new Scanner(System.in);
-		System.out.println("Seleccione un nombre de producto:");
-		String name2 = scanner.next();
-		Product product = findProduct(name2);
-		if (product != null) {
-			System.out.println("Producto eliminado");
-		} else {
-			System.out.println("Prducto no encontrado");
-		}
 
 	}
-	
-	/*
-	 * add a product to inventory
-	 * 
-	 * @param product
-	 */
-	public void deleteProduct(Product product) {
-		inventory.remove(product);
+
+	public void initSession(){
+		Scanner sc = new Scanner(System.in);
+		boolean logged;
+		System.out.println("Name User: ");
+		String user = sc.next();
+		do {
+			String name = "";
+			System.out.println("ID User: ");
+			int iduser = sc.nextInt();
+			System.out.println("Password: ");
+			String password = sc.next();
+			
+			Employee employee = new Employee(iduser, password);
+			
+			logged = employee.login(iduser, password);
+			
+		}while(logged == false);
 	}
 	
-	public boolean alreadyExists(String nombre) {
-		if (findProduct(nombre) != null) {
-			return true;
-		}else {
-			return false;
-		}
-	}
-	public boolean initSesion() {
-		Scanner scanner = new Scanner (System.in);
-		System.out.println("Introduzca el numero de empleado");
-		int user = scanner.nextInt();
-		System.out.println("Introduzca la contraseña de empleado");
-		String password = scanner.next();
-		Employee employee = new Employee(null); 
-		if (employee.login(user, password)){
-			return true;
-		}
-		else {
-		System.out.println("Datos incorrectos");
-		return false;
-		}
-	}
 }
