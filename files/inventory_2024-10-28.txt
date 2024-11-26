@@ -1,0 +1,6 @@
+1Product:Manzana;Stock:14;
+2Product:Pera;Stock:20;
+3Product:Hamburguesa;Stock:30;
+4Product:Fresa;Stock:20;
+5Product:Platano;Stock:5;
+Numero total de productos: 5

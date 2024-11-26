@@ -1,4 +1,4 @@
-package views;
+package view;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -24,7 +24,7 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JButton countCageButton;
+	private JButton countCashButton;
 	private JButton addNewProductButton;
 	private JButton addStockButton;
 	private JButton deleteProductButton;
@@ -52,12 +52,12 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 		textLabel.setBounds(20, 10, 260, 16);
 		contentPane.add(textLabel);
 		
-		countCageButton = new JButton("1.Count Cashier");
-		countCageButton.setBounds(251, 51, 150, 50);
-		contentPane.add(countCageButton);
-		countCageButton.addActionListener(this);
-		countCageButton.addKeyListener(this);
-		countCageButton.setFocusable(false);
+		countCashButton = new JButton("1.Count cash");
+		countCashButton.setBounds(251, 51, 150, 50);
+		contentPane.add(countCashButton);
+		countCashButton.addActionListener(this);
+		countCashButton.addKeyListener(this);
+		countCashButton.setFocusable(false);
 		
 		addNewProductButton = new JButton("2.Add new product");
 		addNewProductButton.setBounds(30, 125, 150, 50);
@@ -91,10 +91,10 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 	
 	// Getters and Setters
 	public JButton getCountCageButton() {
-		return countCageButton;
+		return countCashButton;
 	}
-	public void setCountCageButton(JButton countCageButton) {
-		this.countCageButton = countCageButton;
+	public void setCountCageButton(JButton countCashButton) {
+		this.countCashButton = countCashButton;
 	}
 	public JButton getAddNewProductButton() {
 		return addNewProductButton;
@@ -163,7 +163,7 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 	
 	public void actionPerformed(ActionEvent e) {
 		ProductView addproductView = new ProductView();
-		if(countCageButton == e.getSource()) {
+		if(countCashButton == e.getSource()) {
 			option = 1;
 			openCashView(option, shop);
 		}else if(addNewProductButton == e.getSource()) {
@@ -184,18 +184,11 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 		            JOptionPane.showMessageDialog(this,
 	                        "Inventory writed successfully!",
 	                        "Success", JOptionPane.INFORMATION_MESSAGE);
-		            
-		    
-		            
-		           ;
-		            
 	            }else {
 	            	System.err.println("Error to export: " + exportResult);
 		            JOptionPane.showMessageDialog(this,
 							"ERROR: product not exist",
 							"Error to delete", JOptionPane.ERROR_MESSAGE);
-
-		            
 	            }
 	        } catch (Exception error) {
 	            System.err.println("Error to export: " + error.getMessage());
@@ -216,13 +209,13 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 	}
 	
 	public void blockButtons() {
-		countCageButton.setEnabled(false);
+		countCashButton.setEnabled(false);
 	    addNewProductButton.setEnabled(false);
 	    addStockButton.setEnabled(false);
 	    deleteProductButton.setEnabled(false); 
 	}
 	public void unlockButtons() {
-		countCageButton.setEnabled(true);
+		countCashButton.setEnabled(true);
 	    addNewProductButton.setEnabled(true);
 	    addStockButton.setEnabled(true);
 	    deleteProductButton.setEnabled(true); 

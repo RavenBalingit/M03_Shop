@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<products total="4">
+    <product id="1" name="Manzana">
+        <available>true</available>
+        <wholesalerPrise currency="€">10.0</wholesalerPrise>
+        <publicPrice currency="€">20.0</publicPrice>
+        <stock>10</stock>
+    </product>
+    <product id="2" name="Pera">
+        <available>true</available>
+        <wholesalerPrise currency="€">20.0</wholesalerPrise>
+        <publicPrice currency="€">40.0</publicPrice>
+        <stock>20</stock>
+    </product>
+    <product id="3" name="Hamburguesa">
+        <available>true</available>
+        <wholesalerPrise currency="€">30.0</wholesalerPrise>
+        <publicPrice currency="€">60.0</publicPrice>
+        <stock>30</stock>
+    </product>
+    <product id="4" name="Fresa">
+        <available>true</available>
+        <wholesalerPrise currency="€">5.0</wholesalerPrise>
+        <publicPrice currency="€">10.0</publicPrice>
+        <stock>20</stock>
+    </product>
+</products>

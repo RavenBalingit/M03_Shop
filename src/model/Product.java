@@ -1,96 +1,93 @@
 package model;
 
+import javax.xml.bind.annotation.*;
+
+@XmlRootElement(name = "product")
+@XmlType(propOrder = {"available", "wholesalerPrice", "publicPrice", "stock"}) // Orden en el XML
 public class Product {
-	private int id;
+    private int id;
     private String name;
-    private double publicPrice;
-    private double wholesalerPrice;
     private boolean available;
+    private Amount wholesalerPrice;
+    private Amount publicPrice;
     private int stock;
-    private static int totalProducts;
-    // add final [CORRECTION]
-    final static double EXPIRATION_RATE=0.60;
+    public static int totalProducts;
+
+    public Product(String name, Amount wholesalerPrice,  int stock, boolean available) {
+        this.id = ++totalProducts;
+        this.name = name;
+        this.wholesalerPrice = wholesalerPrice;
+        this.publicPrice = new Amount(wholesalerPrice.getValue() * 2); // PublicPrice se calcula aquí
+        this.available = available;
+        this.stock = stock;
+    }
+
+    public Product() {
+        this.id = ++totalProducts; // Constructor por defecto
+    }
+
+    @XmlAttribute(name = "id")
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @XmlAttribute(name = "name")
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @XmlElement
+    public boolean getAvailable() {    	
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
+    @XmlElement(name = "wholesalerPrise")
+    public Amount getWholesalerPrice() {    	
+        return wholesalerPrice;
+    }
+
+    public void setWholesalerPrice(Amount wholesalerPrice) {
+    	this.publicPrice = new Amount(wholesalerPrice.getValue() * 2);
+        this.wholesalerPrice = wholesalerPrice;
+    }
+
+    @XmlElement(name = "publicPrice")
+    public Amount getPublicPrice() {
+        return publicPrice;
+    }
+
+    public void setPublicPrice(Amount publicPrice) {
+        this.publicPrice = publicPrice;
+    }
+
+    @XmlElement(name = "stock")
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+        this.available = stock > 0;
+    }
     
-	public Product(String name, Amount amount, boolean available, int stock) {
-		super();
-		this.id = totalProducts+1;
-		this.name = name;
-		//add the publicPrice [CORRECTION]
-		this.publicPrice = amount.getValue() * 2;
-		this.wholesalerPrice = amount.getValue();
-		this.available = available;
-		this.stock = stock;
-		totalProducts++;
+    public void expire() {
+		setAvailable(false);
 	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public double getPublicPrice() {
-		return publicPrice;
-	}
-
-	public void setPublicPrice(double publicPrice) {
-		this.publicPrice = publicPrice;
-	}
-
-	public double getWholesalerPrice() {
-		return wholesalerPrice;
-	}
-
-	public void setWholesalerPrice(double wholesalerPrice) {
-		this.wholesalerPrice = wholesalerPrice;
-	}
-
-	public boolean isAvailable() {
-		return available;
-	}
-
-	public void setAvailable(boolean available) {
-		this.available = available;
-	}
-
-	public int getStock() {
-		return stock;
-	}
-	
-	public void setStock(int stock) {
-		this.stock = stock;
-	}
-
-	public static int getTotalProducts() {
-		return totalProducts;
-	}
-
-	public static void setTotalProducts(int totalProducts) {
-		Product.totalProducts = totalProducts;
-	}
-	
-	public void expire() {
-		this.publicPrice = this.getPublicPrice()*EXPIRATION_RATE;
-	}
-// Create toString [CORRECTION]
-	@Override
-	public String toString() {
-		return "Product [name=" + name + ", publicPrice=" + publicPrice + ", stock=" + stock + "]";
-	}
-	
-	
-
     
-
-    
+    @Override
+    public String toString() {
+        return "Product [name=" + name + ", publicPrice=" + publicPrice + ", stock=" + stock + "]";
+    }
 }

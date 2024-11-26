@@ -1,31 +1,36 @@
 package model;
 
-public class Amount {
-	
-	private double value;
-	final static String CURRENCY = "€";
-	
-	public Amount(double value) {
-		super();
-		this.value = value;
-	}
-	
-	public double getValue() {
-		return value;
-	}
-	public void setValue(double value) {
-		this.value = value;
-	}
-	
-	public static String getCurrency() {
-		return CURRENCY;
-	}
+import javax.xml.bind.annotation.*;
 
-	@Override
-	public String toString() {
-		return value + CURRENCY;
-	}
-	
-	
-	
+@XmlRootElement(name = "wholesalerPrise")
+public class Amount {
+    private double value;
+
+    @XmlAttribute(name = "currency")
+    private final static String currency = "€";
+
+    public Amount() {
+    }
+
+    public Amount(double value) {
+        this.value = value;
+    }
+
+    @XmlValue
+    public double getValue() {
+        return value;
+    }
+
+    public void setValue(double value) {
+        this.value = value;
+    }
+
+    public static String getCurrency() {
+        return currency;
+    }
+
+    @Override
+    public String toString() {
+        return value + currency;
+    }
 }

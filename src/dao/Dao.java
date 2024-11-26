@@ -12,7 +12,7 @@ public interface Dao {
 	
 	Employee getEmployee(int employeeId, String password);
 	
-	void disconnect() throws SQLException;
+	void disconnect();
 	
 	ArrayList<Product> getInventory();
 	

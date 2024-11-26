@@ -49,10 +49,15 @@ public class DaoImplJDBC implements Dao {
 	}
 
 	@Override
-	public void disconnect() throws SQLException {
-		if(conn != null) {
-			conn.close();
+	public void disconnect() {
+		try {
+			if(conn != null) {
+				conn.close();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
+		
 		
 	}
 

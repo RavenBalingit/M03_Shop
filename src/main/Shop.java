@@ -23,7 +23,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
+import javax.activation.ActivationDataFlavor;
+
 import dao.DaoImplFile;
+import dao.DaoImplJaxb;
+import dao.DaoImplXml;
+import dao.xml.SaxReader;
 
 public class Shop {
 	private Amount cash = new Amount(100.00);
@@ -34,7 +39,12 @@ public class Shop {
 	final static double TAX_RATE = 1.04;
 	//create a new variable to count the sales of the shop.
 	private int countSales;
-	private DaoImplFile dao = new DaoImplFile();
+	
+	// Commented daoImpl File line to avoid conflict with other dao.
+	//private DaoImplFile dao = new DaoImplFile();
+	//private DaoImplXml dao = new DaoImplXml();
+	private DaoImplJaxb dao = new DaoImplJaxb();
+	
 	
 	public Shop() {
 		// cash = 0.0; initial cash = 100.00 [CORRECTION]
@@ -129,10 +139,10 @@ public class Shop {
 	 */
 	public void loadInventory() {
 		
-		addProduct(new Product("Manzana", new Amount(10.00), true, 10));
-		addProduct(new Product("Pera", new Amount(20.00), true, 20));
-		addProduct(new Product("Hamburguesa", new Amount(30.00), true, 30));
-		addProduct(new Product("Fresa", new Amount(5.00), true, 20));
+		addProduct(new Product("Manzana", new Amount(10.00), 10, true));
+		addProduct(new Product("Pera", new Amount(20.00), 20, true));
+		addProduct(new Product("Hamburguesa", new Amount(30.00), 30, true));
+		addProduct(new Product("Fresa", new Amount(5.00), 20, true));
 		
 	}
 	
@@ -262,8 +272,13 @@ public class Shop {
 				//System.out.println("The product alredy exists");
 				errorMethot = false;
 			}else {
+				if(stock <= 0) {
+					addProduct(new Product(name, price, stock, false));
+				}else {
+					addProduct(new Product(name, price, stock, true));
+				}
+				
 				errorMethot = true;
-				addProduct(new Product(name, price, true, stock));
 			}
 		/*
 		*	System.out.print("Precio mayorista: ");
@@ -378,9 +393,9 @@ public class Shop {
 			Product product = findProduct(name);
 			boolean productAvailable = false;
 
-			if (product != null && product.isAvailable()) {
+			if (product != null && product.getAvailable()) {
 				productAvailable = true;
-				double sum = totalAmount.getValue() + product.getPublicPrice();
+				double sum = totalAmount.getValue() + product.getPublicPrice().getValue();
 				totalAmount.setValue(sum); 
 				product.setStock(product.getStock() - 1);
 				// if no more stock, set as not available to sale
