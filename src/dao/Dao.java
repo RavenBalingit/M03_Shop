@@ -3,6 +3,7 @@ package dao;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import model.Amount;
 import model.Employee;
 import model.Product;
 
@@ -17,5 +18,11 @@ public interface Dao {
 	ArrayList<Product> getInventory();
 	
 	boolean writeInventory(ArrayList<Product> inventory);
+
+	boolean addProduct(String name, Amount price, int stock, boolean avaiblable);
+
+	boolean addStockProduct(String name, int stock);
+
+	boolean deleteProduct(String name);
 	
 }

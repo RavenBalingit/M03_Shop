@@ -17,7 +17,7 @@ public class JaxbMarshaller {
 			JAXBContext context = JAXBContext.newInstance(ProductList.class);
 			Marshaller marshaller = context.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			System.out.println("Marshalling in progress ");
+			System.out.println("marshalling... ");
 			String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 			marshaller.marshal(products, new File("xml/inventory_"+date+".xml"));
 			return true;

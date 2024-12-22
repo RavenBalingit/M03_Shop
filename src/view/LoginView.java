@@ -82,16 +82,16 @@ public class LoginView extends JFrame implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		try {	
-			int userId = Integer.parseInt(textField.getText());
-			String userPass = textField_1.getText();
-			Employee employee = new Employee(userId, userPass);
-			if(employee.login(userId, userPass) == true) {
+			int employeeID = Integer.parseInt(textField.getText());
+			String employeePassword = textField_1.getText();
+			Employee employee = new Employee(employeeID, employeePassword);
+			if(employee.login(employeeID, employeePassword) == true) {
 				ShopView shopView = new ShopView();
 		        shopView.setVisible(true);
 		        this.dispose();
 			} else {
 				JOptionPane.showMessageDialog(this,
-						"ERROR: data is wrong",
+						"ERROR: dataaa is wrong",
 						"Error de Inserción", JOptionPane.ERROR_MESSAGE);
 				textField.setText("");
 				textField_1.setText("");
@@ -101,12 +101,14 @@ public class LoginView extends JFrame implements ActionListener {
                 }
 			}
 		} catch (LimitLoginException ex) {
+	        // Manejo de la excepción
 	        ex.printStackTrace();
 	        JOptionPane.showMessageDialog(this,
                     "Se han excedido el límite de intentos de inicio de sesión.",
                     "ERROR", JOptionPane.ERROR_MESSAGE);
 	        System.exit(0);
 	    } catch (NumberFormatException ex) {
+	        // Manejo de la excepción
 	        ex.printStackTrace();
 	        JOptionPane.showMessageDialog(this,
 					"ERROR: data is wrong",

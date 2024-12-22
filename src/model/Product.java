@@ -11,15 +11,25 @@ public class Product {
     private Amount wholesalerPrice;
     private Amount publicPrice;
     private int stock;
-    public static int totalProducts;
+    public static int totalProducts = 0;
 
     public Product(String name, Amount wholesalerPrice,  int stock, boolean available) {
         this.id = ++totalProducts;
         this.name = name;
         this.wholesalerPrice = wholesalerPrice;
-        this.publicPrice = new Amount(wholesalerPrice.getValue() * 2); // PublicPrice se calcula aquí
+        this.publicPrice = new Amount(wholesalerPrice.getValue() * 2);
         this.available = available;
         this.stock = stock;
+    }
+    
+    public Product(int id, String name, Amount wholesalerPrice, Amount publicPrice,  int stock, boolean available) {
+        this.id = id;
+        this.name = name;
+        this.wholesalerPrice = wholesalerPrice;
+        this.publicPrice = publicPrice;
+        this.available = available;
+        this.stock = stock;
+        this.totalProducts++;
     }
 
     public Product() {
@@ -88,6 +98,6 @@ public class Product {
     
     @Override
     public String toString() {
-        return "Product [name=" + name + ", publicPrice=" + publicPrice + ", stock=" + stock + "]";
+        return "Product [name=" + name + ", publicPrice=" + publicPrice + ", stock=" + stock + "]" + id;
     }
 }

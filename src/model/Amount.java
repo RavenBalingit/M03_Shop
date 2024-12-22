@@ -10,6 +10,7 @@ public class Amount {
     private final static String currency = "€";
 
     public Amount() {
+        // Constructor por defecto
     }
 
     public Amount(double value) {

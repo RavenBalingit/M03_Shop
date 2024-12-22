@@ -34,25 +34,24 @@ public class Employee extends Person {
 	public boolean login(int user, String password) {
     	
 	// Connect to database data.	
-/*
+
 		  DaoImplJDBC dao = new DaoImplJDBC();
 		  
-		  dao.connect(); System.out.println("Conectado"); Employee employee =
-		  dao.getEmployee(user, password); try { dao.disconnect(); } catch
-		  (SQLException e) { e.printStackTrace(); }
+		  dao.connect(); System.out.println("Conectado");
+		  Employee employee = dao.getEmployee(user, password); 
+		  dao.disconnect();
 		  
-		  if(employee == null) { return false; }else{ return true; }
-*/		 
+		  if(employee == null) { return false; }else{ return true; }		 
 		
 		
 	// Simple form of Login.
-		  
+	/*	  
 		if((user == USER) && (password == this.password)){
 			return true;
 		}else {
 			return false;
 		}
-
+	 */
     }
     
 }

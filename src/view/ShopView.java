@@ -93,8 +93,8 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 	public JButton getCountCageButton() {
 		return countCashButton;
 	}
-	public void setCountCageButton(JButton countCashButton) {
-		this.countCashButton = countCashButton;
+	public void setCountCageButton(JButton countCageButton) {
+		this.countCashButton = countCageButton;
 	}
 	public JButton getAddNewProductButton() {
 		return addNewProductButton;

@@ -18,7 +18,7 @@ public class JaxbUnMarshaller {
 		try {
 			JAXBContext context = JAXBContext.newInstance(ProductList.class);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
-			System.out.println("Unmarshalling in progress");
+			System.out.println("unmarshalling...");
 			products = (ProductList) unmarshaller.unmarshal(new File("xml/inputInventory.xml"));
 		} catch (JAXBException e) {
 			e.printStackTrace();
@@ -26,7 +26,7 @@ public class JaxbUnMarshaller {
 
 		// print products
 		if (products == null || products.getProducts() == null) {
-            System.out.println("There has been an error unmarshalling");
+            System.out.println("Error unmarshalling");
             return null;
         } else {
             for (Product p : products.getProducts()) {

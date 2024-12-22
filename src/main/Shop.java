@@ -26,6 +26,7 @@ import java.util.Scanner;
 import javax.activation.ActivationDataFlavor;
 
 import dao.DaoImplFile;
+import dao.DaoImplJDBC;
 import dao.DaoImplJaxb;
 import dao.DaoImplXml;
 import dao.xml.SaxReader;
@@ -43,7 +44,8 @@ public class Shop {
 	// Commented daoImpl File line to avoid conflict with other dao.
 	//private DaoImplFile dao = new DaoImplFile();
 	//private DaoImplXml dao = new DaoImplXml();
-	private DaoImplJaxb dao = new DaoImplJaxb();
+	//private DaoImplJaxb dao = new DaoImplJaxb();
+	private DaoImplJDBC dao = new DaoImplJDBC();
 	
 	
 	public Shop() {
@@ -182,25 +184,19 @@ public class Shop {
 	
 	// Read inventory file or create a new one if not exist
 	public void readInventory() {
-		
+
+		dao.connect(); 
+		System.out.println("Conectado");  
 		inventory = dao.getInventory();
+		dao.disconnect();
 	}
 	
 	// Write new products to file inventory.txt
 	public boolean writeInventory() {
-		
-		return dao.writeInventory(inventory);
-		/*
-		 * boolean isWrited = false; try { File fileInventory = new
-		 * File("inputInventory.txt"); FileWriter myWriter = new
-		 * FileWriter("inputInventory.txt"); if(fileInventory.exists()) { for (Product
-		 * product : inventory) { if (product != null) {
-		 * myWriter.write("Product:"+product.getName()+";Wholesaler Price:"
-		 * +product.getWholesalerPrice()+";Stock:"+product.getStock()+";\n"); } }
-		 * System.out.println("File inventory finished"); myWriter.close(); isWrited =
-		 * true; } } catch (IOException e) {
-		 * System.out.println("Error: Archivo no encontrado"); e.printStackTrace(); }
-		 */
+		dao.connect(); 
+		boolean result = dao.writeInventory(inventory);
+		dao.disconnect();
+		return result;
 	}
 	
 	// write the new sales in the fileSales
@@ -272,13 +268,15 @@ public class Shop {
 				//System.out.println("The product alredy exists");
 				errorMethot = false;
 			}else {
+				dao.connect();
 				if(stock <= 0) {
 					addProduct(new Product(name, price, stock, false));
+					errorMethot = dao.addProduct(name, price, stock, false);
 				}else {
 					addProduct(new Product(name, price, stock, true));
+					errorMethot = dao.addProduct(name, price, stock, true);
 				}
-				
-				errorMethot = true;
+
 			}
 		/*
 		*	System.out.print("Precio mayorista: ");
@@ -286,7 +284,7 @@ public class Shop {
 		*	System.out.print("Stock: ");
 		*	int stock = scanner.nextInt();
 		 */
-		
+		dao.disconnect();
 		return errorMethot;
 	}
 
@@ -300,10 +298,10 @@ public class Shop {
 		* String name = scanner.next();
 		*/
 		Product product = findProduct(name);
-
+		dao.connect();
 		if (product != null) {
 		//make available if stock = 0 [CORRECTION]
-			if(product.getStock() == 0) {
+			if(product.getStock() <= 0) {
 				product.setAvailable(true);
 			}
 		// ask for stock
@@ -314,6 +312,7 @@ public class Shop {
 			*/
 		// update stock product
 		//plus the stock that you write [CORRECTION]
+			dao.addStockProduct(name, stock);
 			product.setStock(product.getStock() + stock);
 			System.out.println("El stock del producto " + name + " ha sido actualizado a " + product.getStock());
 			errorMethot = true;
@@ -322,6 +321,7 @@ public class Shop {
 			//System.out.println("No se ha encontrado el producto con nombre " + name);
 			errorMethot = false;
 		}
+		dao.disconnect();
 		return errorMethot;
 	}
 
@@ -484,14 +484,13 @@ public class Shop {
 		Product product = findProduct(name);
 		
 		if(product != null) {
-			for (int i=0;i<inventory.size();i++) {
-				if (product != null) {
-					inventory.remove(product);
-					System.out.println(product.getName()+" was deleted");
-					//Rewrite the inventory without the product
-					errorMethot = true;
-				}
-			}
+			dao.connect();
+			dao.deleteProduct(name);
+			inventory.remove(product);
+			System.out.println(product.getName()+" was deleted");
+			//Rewrite the inventory without the product
+			errorMethot = true;
+			dao.disconnect();
 		}else {
 			System.out.println("This product not exists");
 			errorMethot = false;
