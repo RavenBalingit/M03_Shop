@@ -1,0 +1,26 @@
+<hibernate-configuration>
+    <session-factory>
+        <!-- Configuración de la conexión -->
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="hibernate.connection.url">
+            jdbc:mysql://localhost:8889/TiendaM06
+        </property>
+        <property name="hibernate.connection.username">root</property>
+        <property name="hibernate.connection.password">root</property>
+        
+        <!-- Dialecto de Hibernate -->
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</property>
+        
+        <!-- Configuración adicional -->
+        <property name="hbm2ddl.auto">update</property>
+        <property name="show_sql">true</property>
+        
+        <!-- Configuración para manejar sesiones en el contexto del hilo -->
+        <property name="hibernate.current_session_context_class">thread</property>
+        
+        <!-- Mapeos -->
+        <mapping class="model.Employee"/>
+        <mapping class="model.Product"/>
+        <mapping class="model.ProductHistory"/>
+    </session-factory>
+</hibernate-configuration>

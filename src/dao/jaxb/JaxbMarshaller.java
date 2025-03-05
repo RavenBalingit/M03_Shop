@@ -19,7 +19,7 @@ public class JaxbMarshaller {
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			System.out.println("marshalling... ");
 			String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-			marshaller.marshal(products, new File("xml/inventory_"+date+".xml"));
+			marshaller.marshal(products, new File("jaxb/inventory_"+date+".xml"));
 			return true;
 		} catch (JAXBException e) {
 			e.printStackTrace();

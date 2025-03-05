@@ -20,6 +20,8 @@ public interface Dao {
 	boolean writeInventory(ArrayList<Product> inventory);
 
 	boolean addProduct(String name, Amount price, int stock, boolean avaiblable);
+	
+	boolean updateProduct(Product product);
 
 	boolean addStockProduct(String name, int stock);
 

@@ -1,16 +1,40 @@
 package model;
 
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.PostLoad;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.*;
 
 @XmlRootElement(name = "product")
 @XmlType(propOrder = {"available", "wholesalerPrice", "publicPrice", "stock"}) // Orden en el XML
-public class Product {
+
+@Entity
+@Table(name = "inventory")
+public class Product implements Serializable{
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name = "id")
     private int id;
-    private String name;
+	@Column(name = "available")
     private boolean available;
+	@Column(name = "name")
+    private String name;
+    @Transient
     private Amount wholesalerPrice;
+    @Transient
     private Amount publicPrice;
+    @Column(name = "price")
+    private double price;
+    @Column(name = "stock")
     private int stock;
+    @Transient
     public static int totalProducts = 0;
 
     public Product(String name, Amount wholesalerPrice,  int stock, boolean available) {
@@ -33,9 +57,16 @@ public class Product {
     }
 
     public Product() {
-        this.id = ++totalProducts; // Constructor por defecto
+        this.id = ++totalProducts;
     }
 
+    @PostLoad
+    private void calculatePrices() {
+        this.publicPrice = new Amount(this.price * 2); // price = publicPrice * 2
+        this.wholesalerPrice = new Amount(this.price); // wholesalerPrice = price
+
+    }
+    
     @XmlAttribute(name = "id")
     public int getId() {
         return id;
@@ -63,7 +94,7 @@ public class Product {
         this.available = available;
     }
 
-    @XmlElement(name = "wholesalerPrise")
+    @XmlElement(name = "wholesalerPrice")
     public Amount getWholesalerPrice() {    	
         return wholesalerPrice;
     }
@@ -92,12 +123,20 @@ public class Product {
         this.available = stock > 0;
     }
     
-    public void expire() {
+    public double getPrice() {
+		return price;
+	}
+
+	public void setPrice(double price) {
+		this.price = price;
+	}
+
+	public void expire() {
 		setAvailable(false);
 	}
-    
-    @Override
+
+	@Override
     public String toString() {
-        return "Product [name=" + name + ", publicPrice=" + publicPrice + ", stock=" + stock + "]" + id;
+        return "Product [id=" + id + "name=" + name + ", wholesalerPrice=" + wholesalerPrice + ", publicPrice=" + publicPrice + ", stock=" + stock + ", available=" + available + "]";
     }
 }

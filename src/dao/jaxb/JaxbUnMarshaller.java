@@ -19,7 +19,7 @@ public class JaxbUnMarshaller {
 			JAXBContext context = JAXBContext.newInstance(ProductList.class);
 			Unmarshaller unmarshaller = context.createUnmarshaller();
 			System.out.println("unmarshalling...");
-			products = (ProductList) unmarshaller.unmarshal(new File("xml/inputInventory.xml"));
+			products = (ProductList) unmarshaller.unmarshal(new File("jaxb/inputInventory.xml"));
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}

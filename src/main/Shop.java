@@ -26,6 +26,7 @@ import java.util.Scanner;
 import javax.activation.ActivationDataFlavor;
 
 import dao.DaoImplFile;
+import dao.DaoImplHibernate;
 import dao.DaoImplJDBC;
 import dao.DaoImplJaxb;
 import dao.DaoImplXml;
@@ -45,8 +46,8 @@ public class Shop {
 	//private DaoImplFile dao = new DaoImplFile();
 	//private DaoImplXml dao = new DaoImplXml();
 	//private DaoImplJaxb dao = new DaoImplJaxb();
-	private DaoImplJDBC dao = new DaoImplJDBC();
-	
+	//private DaoImplJDBC dao = new DaoImplJDBC();
+	private DaoImplHibernate dao = new DaoImplHibernate();
 	
 	public Shop() {
 		// cash = 0.0; initial cash = 100.00 [CORRECTION]
@@ -185,9 +186,11 @@ public class Shop {
 	// Read inventory file or create a new one if not exist
 	public void readInventory() {
 
-		dao.connect(); 
-		System.out.println("Conectado");  
+		dao.connect();  
 		inventory = dao.getInventory();
+		for(Product product : inventory) {
+			System.out.println(product);
+		}
 		dao.disconnect();
 	}
 	
@@ -311,10 +314,10 @@ public class Shop {
 			* int stock = scanner.nextInt();
 			*/
 		// update stock product
-		//plus the stock that you write [CORRECTION]
-			dao.addStockProduct(name, stock);
+		//plus the stock that you write [CORRECTION]			
 			product.setStock(product.getStock() + stock);
 			System.out.println("El stock del producto " + name + " ha sido actualizado a " + product.getStock());
+			dao.addStockProduct(name, stock);
 			errorMethot = true;
 			//System.out.println(product.getStock()); Stock before change
 		} else {
@@ -484,10 +487,10 @@ public class Shop {
 		Product product = findProduct(name);
 		
 		if(product != null) {
-			dao.connect();
-			dao.deleteProduct(name);
+			dao.connect();			
 			inventory.remove(product);
 			System.out.println(product.getName()+" was deleted");
+			dao.deleteProduct(name);
 			//Rewrite the inventory without the product
 			errorMethot = true;
 			dao.disconnect();
@@ -542,18 +545,16 @@ public class Shop {
 	public void initSession(){
 		Scanner sc = new Scanner(System.in);
 		boolean logged;
-		System.out.println("Name User: ");
-		String user = sc.next();
 		do {
 			String name = "";
-			System.out.println("ID User: ");
-			int iduser = sc.nextInt();
+			System.out.println("User: ");
+			int user = sc.nextInt();
 			System.out.println("Password: ");
 			String password = sc.next();
 			
-			Employee employee = new Employee(iduser, password);
+			Employee employee = new Employee(user, password);
 			
-			logged = employee.login(iduser, password);
+			logged = employee.login(user, password);
 			
 		}while(logged == false);
 	}

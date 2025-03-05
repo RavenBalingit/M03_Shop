@@ -90,4 +90,10 @@ public class DaoImplXml implements Dao{
 		return false;
 	}
 
+	@Override
+	public boolean updateProduct(Product product) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

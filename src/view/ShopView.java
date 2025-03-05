@@ -24,11 +24,12 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JButton countCashButton;
+	private JButton countCageButton;
 	private JButton addNewProductButton;
 	private JButton addStockButton;
 	private JButton deleteProductButton;
 	private JButton inventoryButon;
+	private JButton showInventoryButon;
 	private Shop shop = new Shop();
 	private int option;
 	
@@ -52,12 +53,12 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 		textLabel.setBounds(20, 10, 260, 16);
 		contentPane.add(textLabel);
 		
-		countCashButton = new JButton("1.Count cash");
-		countCashButton.setBounds(251, 51, 150, 50);
-		contentPane.add(countCashButton);
-		countCashButton.addActionListener(this);
-		countCashButton.addKeyListener(this);
-		countCashButton.setFocusable(false);
+		countCageButton = new JButton("1.Count cage");
+		countCageButton.setBounds(251, 51, 150, 50);
+		contentPane.add(countCageButton);
+		countCageButton.addActionListener(this);
+		countCageButton.addKeyListener(this);
+		countCageButton.setFocusable(false);
 		
 		addNewProductButton = new JButton("2.Add new product");
 		addNewProductButton.setBounds(30, 125, 150, 50);
@@ -87,14 +88,27 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 		inventoryButon.addKeyListener(this);
 		inventoryButon.setFocusable(false);
 		
+		showInventoryButon = new JButton("5.Inventory");
+		showInventoryButon.setBounds(30, 200, 150, 50);
+		contentPane.add(showInventoryButon);
+		showInventoryButon.addActionListener(this);
+		showInventoryButon.addKeyListener(this);
+		showInventoryButon.setFocusable(false);
+		showInventoryButon.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		
+		
+		
 	}
 	
 	// Getters and Setters
 	public JButton getCountCageButton() {
-		return countCashButton;
+		return countCageButton;
 	}
 	public void setCountCageButton(JButton countCageButton) {
-		this.countCashButton = countCageButton;
+		this.countCageButton = countCageButton;
 	}
 	public JButton getAddNewProductButton() {
 		return addNewProductButton;
@@ -149,6 +163,7 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 	        	addproductView.openProductView(option, shop);
 	            break;
 	        default:
+	            // Si se presiona una tecla diferente, no hace nada
 	            break;
 	    }
 		
@@ -162,19 +177,22 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 
 	
 	public void actionPerformed(ActionEvent e) {
-		ProductView addproductView = new ProductView();
-		if(countCashButton == e.getSource()) {
+		ProductView addProductView = new ProductView();
+		if(countCageButton == e.getSource()) {
 			option = 1;
 			openCashView(option, shop);
 		}else if(addNewProductButton == e.getSource()) {
 			option = 2;
-			addproductView.openProductView(option, shop);
+			addProductView.openProductView(option, shop);
 		}else if(addStockButton == e.getSource()) {
 			option = 3;
-			addproductView.openProductView(option, shop);
+			addProductView.openProductView(option, shop);
+		}else if(showInventoryButon == e.getSource()) {
+			option = 5;
+			openInventoryView();
 		}else if(deleteProductButton == e.getSource()) {
 			option = 9;
-			addproductView.openProductView(option, shop);
+			addProductView.openProductView(option, shop);
 		}else if(inventoryButon == e.getSource()) {
 	        option = 0;
 	        try { 
@@ -187,14 +205,14 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 	            }else {
 	            	System.err.println("Error to export: " + exportResult);
 		            JOptionPane.showMessageDialog(this,
-							"ERROR: product not exist",
-							"Error to delete", JOptionPane.ERROR_MESSAGE);
+							"ERROR: can not write inventory",
+							"Error Writing", JOptionPane.ERROR_MESSAGE);
 	            }
 	        } catch (Exception error) {
 	            System.err.println("Error to export: " + error.getMessage());
 	            JOptionPane.showMessageDialog(this,
-						"ERROR: product not exist",
-						"Error to delete", JOptionPane.ERROR_MESSAGE);
+						"ERROR: can not write inventory",
+						"Error Writing", JOptionPane.ERROR_MESSAGE);
 	        }
 		}
 	}
@@ -208,14 +226,21 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 		}
 	}
 	
+	public void openInventoryView() {
+		if(option == 5) {
+			InventoryView addInventoryView = new InventoryView();
+			addInventoryView.setVisible(true);
+		}
+	}
+	
 	public void blockButtons() {
-		countCashButton.setEnabled(false);
+		countCageButton.setEnabled(false);
 	    addNewProductButton.setEnabled(false);
 	    addStockButton.setEnabled(false);
 	    deleteProductButton.setEnabled(false); 
 	}
 	public void unlockButtons() {
-		countCashButton.setEnabled(true);
+		countCageButton.setEnabled(true);
 	    addNewProductButton.setEnabled(true);
 	    addStockButton.setEnabled(true);
 	    deleteProductButton.setEnabled(true); 

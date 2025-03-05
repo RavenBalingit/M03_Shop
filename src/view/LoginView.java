@@ -82,16 +82,16 @@ public class LoginView extends JFrame implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		try {	
-			int employeeID = Integer.parseInt(textField.getText());
-			String employeePassword = textField_1.getText();
-			Employee employee = new Employee(employeeID, employeePassword);
-			if(employee.login(employeeID, employeePassword) == true) {
+			int userId = Integer.parseInt(textField.getText());
+			String userPass = textField_1.getText();
+			Employee employee = new Employee(userId, userPass);
+			if(employee.login(userId, userPass) == true) {
 				ShopView shopView = new ShopView();
 		        shopView.setVisible(true);
 		        this.dispose();
 			} else {
 				JOptionPane.showMessageDialog(this,
-						"ERROR: dataaa is wrong",
+						"ERROR: data is wrong",
 						"Error de Inserción", JOptionPane.ERROR_MESSAGE);
 				textField.setText("");
 				textField_1.setText("");

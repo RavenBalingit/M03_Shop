@@ -32,13 +32,14 @@ public class DaoImplJDBC implements Dao {
 		}
 	}
 
-	public Employee getEmployee(int employeeId, String password) {
+	public Employee getEmployee(int user, String password) {
 		
 		Employee employee = null;
-		String query = "SELECT employeeId, employeePassword FROM Employee where employeeId = ? AND employeePassword = ?";
+		int id = 0;
+		String query = "SELECT employeeId, user, employeePassword FROM Employee where employeeId = ? AND employeePassword = ?";
 		try (PreparedStatement ps = conn.prepareStatement(query)) { 
 			// set id to search for
-			ps.setInt(1,employeeId);
+			ps.setInt(1,user);
 			ps.setString(2,password);
 		  	//System.out.println(ps.toString());
 	        try (ResultSet rs = ps.executeQuery()) {
@@ -46,7 +47,7 @@ public class DaoImplJDBC implements Dao {
 	        		employee =  new Employee(rs.getInt(1), rs.getString(2));            		            				
 	        	}
 	        }
-	        System.out.println("Employee logged OK");
+	        System.out.println("Employee loged OK");
 	    } catch (SQLException e) {
 			// in case error in SQL
 			e.printStackTrace();
@@ -75,7 +76,7 @@ public class DaoImplJDBC implements Dao {
         try (PreparedStatement ps = conn.prepareStatement(query)) { 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    int id = rs.getInt("product_id");
+                    int id = rs.getInt("id");
                     String name = rs.getString("name");
                     boolean available = rs.getBoolean("available");
                     double wholesalerPrice = rs.getDouble("wholesalerPrice");
@@ -97,9 +98,7 @@ public class DaoImplJDBC implements Dao {
 		
 	    String insertQuery = "INSERT INTO historical_inventory (id_producto, name, wholesalerPrice, available, stock, created_at) "
 	            + "VALUES (?, ?, ?, ?, ?, ?)";
-	    
-	    String updateQuery = "UPDATE historical_inventory SET id_producto = ?, wholesalerPrice = ?, available = ?, stock = ?, created_at = ? "
-	            + "WHERE name = ?";
+	   
 
 	    Set<String> existingProductNames = new HashSet<>();
 	    String loadExistingNamesQuery = "SELECT name FROM historical_inventory";
@@ -113,24 +112,12 @@ public class DaoImplJDBC implements Dao {
 	        return false;
 	    }
 
-	    try (PreparedStatement insertPs = conn.prepareStatement(insertQuery);
-	         PreparedStatement updatePs = conn.prepareStatement(updateQuery)) {
+	    try (PreparedStatement insertPs = conn.prepareStatement(insertQuery)) {
 
 	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	        String currentTime = LocalDateTime.now().format(formatter);
 
 	        for (Product product : inventory) {
-	            if (existingProductNames.contains(product.getName())) {
-	                // Actualizar el registro si el nombre ya existe
-	                updatePs.setInt(1, product.getId());
-	                updatePs.setDouble(2, product.getWholesalerPrice().getValue());
-	                updatePs.setBoolean(3, product.getAvailable());
-	                updatePs.setInt(4, product.getStock());
-	                updatePs.setString(5, currentTime);
-	                updatePs.setString(6, product.getName());
-
-	                updatePs.addBatch();
-	            } else {
 	                // Insertar el registro si el nombre no existe
 	                insertPs.setInt(1, product.getId());
 	                insertPs.setString(2, product.getName());
@@ -140,11 +127,8 @@ public class DaoImplJDBC implements Dao {
 	                insertPs.setString(6, currentTime);
 	                
 	                insertPs.addBatch();
-	            }
 	        }
 
-	        // Ejecutar los lotes de inserciones y actualizaciones
-	        updatePs.executeBatch();
 	        insertPs.executeBatch();
 
 	        return true;
@@ -211,6 +195,12 @@ public class DaoImplJDBC implements Dao {
 			e.printStackTrace();
 			return false;		
 		}
+	}
+
+	@Override
+	public boolean updateProduct(Product product) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 
