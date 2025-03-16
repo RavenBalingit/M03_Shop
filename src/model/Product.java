@@ -2,39 +2,39 @@ package model;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
+/*import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PostLoad;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.Transient;*/
 import javax.xml.bind.annotation.*;
 
 @XmlRootElement(name = "product")
 @XmlType(propOrder = {"available", "wholesalerPrice", "publicPrice", "stock"}) // Orden en el XML
 
-@Entity
-@Table(name = "inventory")
+//@Entity
+//@Table(name = "inventory")
 public class Product implements Serializable{
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name = "id")
+	//@Id
+	//@GeneratedValue(strategy=GenerationType.IDENTITY)
+	//@Column(name = "id")
     private int id;
-	@Column(name = "available")
+	//@Column(name = "available")
     private boolean available;
-	@Column(name = "name")
+	//@Column(name = "name")
     private String name;
-    @Transient
+    //@Transient
     private Amount wholesalerPrice;
-    @Transient
+    //@Transient
     private Amount publicPrice;
-    @Column(name = "price")
+    //@Column(name = "price")
     private double price;
-    @Column(name = "stock")
+    //@Column(name = "stock")
     private int stock;
-    @Transient
+    //@Transient
     public static int totalProducts = 0;
 
     public Product(String name, Amount wholesalerPrice,  int stock, boolean available) {
@@ -60,10 +60,10 @@ public class Product implements Serializable{
         this.id = ++totalProducts;
     }
 
-    @PostLoad
+    //PostLoad
     private void calculatePrices() {
-        this.publicPrice = new Amount(this.price * 2); // price = publicPrice * 2
-        this.wholesalerPrice = new Amount(this.price); // wholesalerPrice = price
+        this.publicPrice = new Amount(this.price * 2); 
+        this.wholesalerPrice = new Amount(this.price);
 
     }
     

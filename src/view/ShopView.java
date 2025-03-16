@@ -53,7 +53,7 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 		textLabel.setBounds(20, 10, 260, 16);
 		contentPane.add(textLabel);
 		
-		countCageButton = new JButton("1.Count cage");
+		countCageButton = new JButton("1.Count cash");
 		countCageButton.setBounds(251, 51, 150, 50);
 		contentPane.add(countCageButton);
 		countCageButton.addActionListener(this);
@@ -163,7 +163,6 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 	        	addproductView.openProductView(option, shop);
 	            break;
 	        default:
-	            // Si se presiona una tecla diferente, no hace nada
 	            break;
 	    }
 		
@@ -216,7 +215,6 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 	        }
 		}
 	}
-		//blockButtons();
 
 	
 	public void openCashView(int option, Shop shop) {
@@ -227,10 +225,10 @@ public class ShopView extends JFrame implements ActionListener, KeyListener{
 	}
 	
 	public void openInventoryView() {
-		if(option == 5) {
-			InventoryView addInventoryView = new InventoryView();
-			addInventoryView.setVisible(true);
-		}
+	    if (option == 5) {
+	        InventoryView addInventoryView = new InventoryView(shop.showInventory());
+	        addInventoryView.setVisible(true);
+	    }
 	}
 	
 	public void blockButtons() {

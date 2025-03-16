@@ -1,4 +1,4 @@
-package dao;
+/* package dao;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -163,7 +163,7 @@ public class DaoImplHibernate implements Dao{
 	        // Buscar el producto
 	        String hql = "FROM Product WHERE lower(name) = lower(:name)";
 	        Product product = session.createQuery(hql, Product.class)
-	                                 .setParameter("name", name.toLowerCase()) // Asegurar minúsculas
+	                                 .setParameter("name", name.toLowerCase()) 
 	                                 .uniqueResult();
 
 	        if (product != null) { // Verificar que el producto exista
@@ -187,3 +187,4 @@ public class DaoImplHibernate implements Dao{
 	}
 
 }
+*/

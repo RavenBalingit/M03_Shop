@@ -21,7 +21,6 @@ public class DaoImplJDBC implements Dao {
 	
 	@Override
 	public void connect() {
-		// Define connection parameters
 		String url = "jdbc:mysql://localhost:8889/TiendaM06";
 		String user = "root";
 		String pass = "root";
@@ -35,21 +34,20 @@ public class DaoImplJDBC implements Dao {
 	public Employee getEmployee(int user, String password) {
 		
 		Employee employee = null;
+		
+		
 		int id = 0;
 		String query = "SELECT employeeId, user, employeePassword FROM Employee where employeeId = ? AND employeePassword = ?";
 		try (PreparedStatement ps = conn.prepareStatement(query)) { 
-			// set id to search for
 			ps.setInt(1,user);
 			ps.setString(2,password);
-		  	//System.out.println(ps.toString());
 	        try (ResultSet rs = ps.executeQuery()) {
 	        	if (rs.next()) {
 	        		employee =  new Employee(rs.getInt(1), rs.getString(2));            		            				
 	        	}
 	        }
-	        System.out.println("Employee loged OK");
+	        System.out.println("Employee logged OK");
 	    } catch (SQLException e) {
-			// in case error in SQL
 			e.printStackTrace();
 		}
 		return employee;
@@ -79,11 +77,10 @@ public class DaoImplJDBC implements Dao {
                     int id = rs.getInt("id");
                     String name = rs.getString("name");
                     boolean available = rs.getBoolean("available");
-                    double wholesalerPrice = rs.getDouble("wholesalerPrice");
-                    double publicPrice = rs.getDouble("publicPrice");
+                    double wholesalerPrice = rs.getDouble("price");
                     int stock = rs.getInt("stock");
 
-                    Product product = new Product(id, name, new Amount(wholesalerPrice), new Amount(publicPrice), stock, available);
+                    Product product = new Product(id, name, new Amount(wholesalerPrice), new Amount(wholesalerPrice*2), stock, available);
                     products.add(product);
                 }
             }
@@ -118,6 +115,7 @@ public class DaoImplJDBC implements Dao {
 	        String currentTime = LocalDateTime.now().format(formatter);
 
 	        for (Product product : inventory) {
+	        	
 	                // Insertar el registro si el nombre no existe
 	                insertPs.setInt(1, product.getId());
 	                insertPs.setString(2, product.getName());

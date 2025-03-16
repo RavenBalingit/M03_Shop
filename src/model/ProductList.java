@@ -31,7 +31,7 @@ public class ProductList {
     }
 
     public void setTotal(int total) {
-        // No es necesario, se calcula automáticamente
+
     }
 
     @Override

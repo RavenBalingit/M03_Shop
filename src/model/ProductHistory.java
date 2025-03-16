@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
+/*import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,28 +14,28 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.ForeignKey;
+import org.hibernate.annotations.ForeignKey;*/
 
-@Entity
-@Table(name = "historical_inventory")
+//@Entity
+//@Table(name = "historical_inventory")
 public class ProductHistory {	
 
-		@Id
-		@GeneratedValue(strategy=GenerationType.IDENTITY)
-		@Column(name = "id")
+		//@Id
+		//@GeneratedValue(strategy=GenerationType.IDENTITY)
+		//@Column(name = "id")
 	    private int id;
-		@Column(name = "available")
+		//@Column(name = "available")
 	    private boolean available;
-		@Column(name = "created_at")
+		//@Column(name = "created_at")
 		private LocalDateTime createdAt;
-	    @OneToOne
-	    @JoinColumn(name = "id_producto")
+	    //@OneToOne
+	    //@JoinColumn(name = "id_producto")
 		private Product idProducto;
-		@Column(name = "name")
+		//@Column(name = "name")
 	    private String name;
-	    @Column(name = "price")
+	    //@Column(name = "price")
 	    private double price;
-	    @Column(name = "stock")
+	    //@Column(name = "stock")
 	    private int stock;
 	    
 	    public ProductHistory() {
